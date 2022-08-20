@@ -12,59 +12,26 @@
     <language>en-us</language>
     <lastBuildDate>Sat, 13 Aug 2022 20:27:10 +0800</lastBuildDate><atom:link href="https://oopsdc.com/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>MD5</title>
-      <link>https://oopsdc.com/post/md5/</link>
+      <title>密码口令</title>
+      <link>https://oopsdc.com/post/%E5%AF%86%E7%A0%81%E5%8F%A3%E4%BB%A4/</link>
       <pubDate>Sat, 13 Aug 2022 20:27:10 +0800</pubDate>
       
-      <guid>https://oopsdc.com/post/md5/</guid>
-      <description>简介 MD5，即Message-Digest Algorithm 5，MD5信息摘要算法。
-这是一种典型的哈希函数/散列函数，会将任意消息内容变为长度固定的散列值，任何输入内容都将被输出一个长度固定为128bit的MD5值，同一个输入消息的输出结果始终相同。
-MD5数据的128bit散列值分为4部分，用4个幻数设定其初始值，4个幻数在内存地址上从低到高为：
-幻数 内存地址 A 01 23 45 67 B 89 ab cd ef C fe dc ba 98 D 76 54 32 10 标准幻数总共为4*32=128bit。
-MD5算法生成散列值的过程总共分为三步：1、填充对齐；2、分块；3、多轮压缩。
-1、填充补齐：需要将数据补充为512bit的整数倍，在补齐数据中采用小端格式，最后64bit固定用于表示原始数据大小，中间剩下的bit第一个填1，其余均为0。若数据为1000bit，不足够存放64bit表示原始数据大小的数据，则补齐到512的三倍即可。
-2、分块：分为512bit的数据块。
-3、多轮压缩：将当前散列值的4部分各复制一份，分别用a、b、c、d表示，压缩共有4轮，每轮压缩过程使用数据块和a、b、c、d进行一系列与、或、非、循环移位的位操作，将a、b、c、d各自更新4次，4轮压缩一共更新16次。完成4轮压缩后，将最后得到的a、b、c、d分别加回到当前散列值的4个部分，散列值被更新。之所以叫压缩，是因为这个过程实际上在使用512bit的数据块来更新128bit的散列值，信息被压缩了，然后再使用后续大块进行相同操作，唯一不同点在于此时散列值初始值为前一个大块的最终值。
-在所有大块上完成多轮压缩后，散列值更新为最终输出的MD5值，将这4部分合起来并变换为大端数即为最终输出的MD5值。
-MD5信息摘要算法于1992年公开，其主要目的在于取代MD4算法，1996年后MD5算法被证实存在弱点，可以被加以破解，2004年MD5算法被证实无法防止碰撞，不适用于SSL公开密钥、数字签名等安全性认证。
-应用场景 文件校验
-数据库字段加密
-如何攻击 MD5只是一个产生消息摘要的散列函数，而非加密算法，这个过程有信息损失且不可逆推。举例：1 | 1 = 1，但是不能倒推原始数据。
-以鸽笼原理举例，一定会有同一个笼子至少有两只鸽子，引申出碰撞的概念。
-原像攻击 这是对MD5的第一个基本安全要求，即找到任意一个能产生这个MD5值的消息，不过到今天也没有一个通用的可行方案。
-暴力穷举：MD5值的范围在0~2^128^之间，理论上可行，但工程上不现实。
-第二原像攻击 如果给定一个消息，能不能再找到另外一个MD5值相同的消息呢？
-抗第二原像攻击（抗弱碰撞性）是对MD5的第二个基本安全性要求，除了在MD4弱消息上可行，对于MD5目前并没有有效的可行方案。
-抗碰撞性（最不具安全性） 也叫抗强碰撞性，是对MD5的第三个基本安全性要求。
-这个特性继续放宽了攻击标准，不指定MD5值和消息，只要找出两个MD5值相同的消息即可。
-之前的研究很长时间都困在“伪碰撞”的范围，真正的突破在2005年山东大学王小云团队的&amp;quot;How to Break MD5 and Other Hash Functions&amp;quot;论文，研究思路为基于模块化差分，大体思路为先找到局部碰撞，然后分析差分如何传播，找到差分路径，再利用消息修改技术得到能产生碰撞的消息对。
-和MD5算法本身相比，寻找碰撞的方法要抽象、复杂得多，但这也正是信安领域的魅力。
-这个方法在大约15~60min内找到了碰撞，从学术角度看，MD5大势已去，但从工程角度而言，虽然可以快速找到大量MD5碰撞，但这两个碰撞的消息是根据差分路径和消息修改精心构造而来，基本上都是没有实际意义的乱码，很难想象会对MD5的工程应用造成什么直接影响。
-在王小云团队的研究基础上，2007年Marc Stevens在硕士论文中交付了两项新成果：1、用一个内容在几秒钟内生成另外两个MD5值一样，但内容不同的消息，重要的是生成的内容可以有意义，该成果有一个叫fastcoll的软件，可通过该软件生成MD5值相同且可以正常打开的图片，但仔细观察文本就会发现其结尾数据并不相同，这被称为相同前缀碰撞，原始内容作为前缀，然后不断尝试构造两个不同的后缀数据，直到最后两者MD5相同，前缀数据保留了内容本身的意义。换个概念来讲，若用可执行程序作为前缀，攻击者可绕过审核发布钓鱼软件，只需让软件内部做一个判定，如本程序最后1bit为1执行正常行为，0执行恶意行为，正常版本通过检测后再用恶意版本进行替换，若只依赖于MD5值判断的话将无法检测到替换的发生。相同前缀生成的可执行文件代码一样，只是触发条件不同，但是在杀毒过程中还是有可能发现可疑行为，所以最好情况是正常版本和恶意版本为两个不相干的程序；2、自由选择前缀消息内容，生成两个MD5值一样但前缀内容不同的文件，称之为选择前缀碰撞，其还会对使用MD5的数字签名产生巨大威胁。
-文章许可：本文采用CC BY-NC-SA 4.0许可协议，转载请注明出处。</description>
-    </item>
-    
-    <item>
-      <title>WSL</title>
-      <link>https://oopsdc.com/post/wsl/</link>
-      <pubDate>Sat, 13 Aug 2022 20:27:10 +0800</pubDate>
-      
-      <guid>https://oopsdc.com/post/wsl/</guid>
-      <description>简介 基本命令：
-WSL 的基本命令 | Microsoft Docs
-位置迁移 先导出再导入即可实现迁移。
-1 关闭系统 确认系统运行情况：
-wsl --list --verbose # 或 wsl -l -v 关闭系统：
-wsl --shutdown 2 迁移 导出到事先创建好的D:\Kali目录：
-# wsl --export &amp;lt;系统名&amp;gt; &amp;lt;导出文件路径&amp;gt; wsl --export kali-linux D:\Kali\Kali.tar 导入：
-# wsl --import &amp;lt;系统名&amp;gt; &amp;lt;安装位置&amp;gt; &amp;lt;导入文件位置&amp;gt; &amp;lt;WSL版本号&amp;gt; wsl --import Kali D:\Kali D:\Kali\Kali.tar --version 2 删除迁移前的系统：
-wsl -l -v # 结果如下 NAME STATE VERSION * kali-linux Stopped 2 Kali Stopped 2 # 删除第一个，即迁移前的系统 wsl --unregister kali-linux 完成迁移。</description>
+      <guid>https://oopsdc.com/post/%E5%AF%86%E7%A0%81%E5%8F%A3%E4%BB%A4/</guid>
+      <description>弱口令 Des: 通常认为容易被别人（他们有可能对你很了解）猜测到或被破解工具破解的口令均为弱口令。
+页面如下：
+尝试账密admin/admin。
+获得flag。
+拓展：弱口令在实战中的应用 由于一些产品的默认设置或使用人员的偷懒行为，我们有时在实际渗透过程中尝试一下弱口令会获得一些意想不到的收获。
+默认口令 Des: N/A。
+页面如下：
+在搜索引擎搜索eyou邮件网关默认账号即可，此处附上其它相关默认账密：
+邮件、网管系统默认账密：admin aaaaa LDAP默认账密：eyouadmin aaaaa MySQL默认账密：root 密码空 网关后台默认账密： admin +-ccccc eyougw admin@(eyou) eyouuser eyou_admin 文章许可：本文采用CC BY-NC-SA 4.0许可协议，转载请注明出处。</description>
     </item>
     
     <item>
       <title>信息泄漏</title>
       <link>https://oopsdc.com/post/%E4%BF%A1%E6%81%AF%E6%B3%84%E9%9C%B2/</link>
-      <pubDate>Sat, 13 Aug 2022 20:27:10 +0800</pubDate>
+      <pubDate>Thu, 11 Aug 2022 20:27:10 +0800</pubDate>
       
       <guid>https://oopsdc.com/post/%E4%BF%A1%E6%81%AF%E6%B3%84%E9%9C%B2/</guid>
       <description>目录遍历 Des: N/A。
@@ -94,38 +61,71 @@ vim缓存 Des: 当开发人员在线上环境中使用 vim 编辑器，在使用
     </item>
     
     <item>
-      <title>密码口令</title>
-      <link>https://oopsdc.com/post/%E5%AF%86%E7%A0%81%E5%8F%A3%E4%BB%A4/</link>
-      <pubDate>Sat, 13 Aug 2022 20:27:10 +0800</pubDate>
+      <title>HTTP协议</title>
+      <link>https://oopsdc.com/post/http%E5%8D%8F%E8%AE%AE/</link>
+      <pubDate>Wed, 10 Aug 2022 09:03:30 +0800</pubDate>
       
-      <guid>https://oopsdc.com/post/%E5%AF%86%E7%A0%81%E5%8F%A3%E4%BB%A4/</guid>
-      <description>弱口令 Des: 通常认为容易被别人（他们有可能对你很了解）猜测到或被破解工具破解的口令均为弱口令。
-页面如下：
-尝试账密admin/admin。
-获得flag。
-拓展：弱口令在实战中的应用 由于一些产品的默认设置或使用人员的偷懒行为，我们有时在实际渗透过程中尝试一下弱口令会获得一些意想不到的收获。
-默认口令 Des: N/A。
-页面如下：
-在搜索引擎搜索eyou邮件网关默认账号即可，此处附上其它相关默认账密：
-邮件、网管系统默认账密：admin aaaaa LDAP默认账密：eyouadmin aaaaa MySQL默认账密：root 密码空 网关后台默认账密： admin +-ccccc eyougw admin@(eyou) eyouuser eyou_admin 文章许可：本文采用CC BY-NC-SA 4.0许可协议，转载请注明出处。</description>
+      <guid>https://oopsdc.com/post/http%E5%8D%8F%E8%AE%AE/</guid>
+      <description>HTTP协议简介 HTTP，即Hyper Text Transfer Protocol超文本传输协议。是用于万维网WWW (World Wide Web)服务器传输超文本到本地浏览器的传输协议，其基于TCP/IP通信协议传输数据。但由于HTTP以明文方式传输数据，缺乏安全性，后面又诞生了HTTPS，即HyperText Transfer Protocol Secure超文本传输安全协议，HTTPS也经由HTTP进行通信，但利用SSL/TLS加密数据包，提供对网站服务器的认证，保护交换资料的隐私和完整性。
+使用HTTP协议的网站URL为http://开头，默认端口号为80；使用HTTPS协议的网站URL为https://开头，默认端口号为443。
+接下来稍微对这两个协议进行一下拓展。
+HTTP工作原理 HTTP工作于C/S，即客户端/服务端架构上，浏览器作为HTTP客户端，通过URL向HTTP服务端，即Web服务器发送请求，常见Web服务器有Apache、IIS等，Web服务器依据收到的请求向客户端发送对应的响应信息。
+HTTP有以下三个特点：
+无连接：限制每次连接只处理一个请求，服务端处理完客户端的请求并收到客户端的应答后就会断开连接，其优势在于节省传输时间； 媒体独立：只要客户端和服务端知道如何处理数据内容，任何类型的数据都可通过HTTP进行传输，客户端和服务端只需协商好MIME-type即可； 无状态：HTTP协议对事务处理没有记忆能力，缺少状态意味着若后续还想继续处理之前的信息将必须对所有数据进行重传，这样做可能导致每次连接传输的数据量增大。 HTTP协议通信流程如下：
+请求方式 Des: HTTP 请求方法, HTTP/1.1协议中共定义了八种方法（也叫动作）来以不同方式操作指定的资源。
+页面内容如下：
+HTTP Method is GET Use CTF**B Method, I will give you flag. Hint: If you got 「HTTP Method Not Allowed」 Error, you should request index.php. 请求包如下：
+GET /index.php HTTP/1.1 Host: challenge-ce480bbff14843e2.sandbox.ctfhub.com:10800 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101 Firefox/91.0 Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8 Accept-Language: en-US,en;q=0.5 Accept-Encoding: gzip, deflate Connection: close Upgrade-Insecure-Requests: 1 Cache-Control: max-age=0 按照给出的方式，使用bp抓包并对网站发送请求：</description>
     </item>
     
     <item>
-      <title>博客搭建</title>
-      <link>https://oopsdc.com/post/%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA/</link>
-      <pubDate>Sun, 12 Jun 2022 12:29:53 +0800</pubDate>
+      <title>WSL</title>
+      <link>https://oopsdc.com/post/wsl/</link>
+      <pubDate>Mon, 13 Jun 2022 20:27:10 +0800</pubDate>
       
-      <guid>https://oopsdc.com/post/%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA/</guid>
-      <description>博客搭建 hugo Hugo官方网站：https://gohugo.io
-本文以PaperMod主题为例，官方文档：Installation · adityatelange/hugo-PaperMod Wiki (github.com)
-需求准备 Hugo：Releases · gohugoio/hugo (github.com)
-安装步骤 1.解压压缩包 2.配置环境变量 D:\Env\hugo_0.83.1 3.初始化博客 官方文档推荐我们使用易读性更高的yml格式初始化博客。
-hugo new site &amp;lt;name of site&amp;gt; -f yml 4.指定主题 在config.yml文件中设置主题。
-theme: PaperMod 5.本地启动 先在本地看看网站跑起来的效果
-hugo server 6.创建GitHub仓库 具体操作详见之后的hexo主题教学。
-7.修改baseUrl 将config.yml文件中的baseUrl修改为刚刚创建的仓库。
-baseURL: &amp;#34;https://&amp;lt;username&amp;gt;.github.io/&amp;#34; 8.生成public文件夹 public中包含所有静态页面的内容，我们需要生成这个文件夹并上传到远程仓库中，完成博客部署。
-hugo 9.push到远程仓库 # 配置代理 git config --global http.proxy socks5://127.0.0.1:&amp;lt;port&amp;gt; git config --global https.proxy socks5://127.0.0.1:&amp;lt;port&amp;gt; # 更改默认分支 git push -u origin main # push文件 cd public git init git add .</description>
+      <guid>https://oopsdc.com/post/wsl/</guid>
+      <description>简介 基本命令：
+WSL 的基本命令 | Microsoft Docs
+位置迁移 先导出再导入即可实现迁移。
+1 关闭系统 确认系统运行情况：
+wsl --list --verbose # 或 wsl -l -v 关闭系统：
+wsl --shutdown 2 迁移 导出到事先创建好的D:\Kali目录：
+# wsl --export &amp;lt;系统名&amp;gt; &amp;lt;导出文件路径&amp;gt; wsl --export kali-linux D:\Kali\Kali.tar 导入：
+# wsl --import &amp;lt;系统名&amp;gt; &amp;lt;安装位置&amp;gt; &amp;lt;导入文件位置&amp;gt; &amp;lt;WSL版本号&amp;gt; wsl --import Kali D:\Kali D:\Kali\Kali.tar --version 2 删除迁移前的系统：
+wsl -l -v # 结果如下 NAME STATE VERSION * kali-linux Stopped 2 Kali Stopped 2 # 删除第一个，即迁移前的系统 wsl --unregister kali-linux 完成迁移。</description>
+    </item>
+    
+    <item>
+      <title>MD5</title>
+      <link>https://oopsdc.com/post/md5/</link>
+      <pubDate>Fri, 13 May 2022 20:27:10 +0800</pubDate>
+      
+      <guid>https://oopsdc.com/post/md5/</guid>
+      <description>简介 MD5，即Message-Digest Algorithm 5，MD5信息摘要算法。
+这是一种典型的哈希函数/散列函数，会将任意消息内容变为长度固定的散列值，任何输入内容都将被输出一个长度固定为128bit的MD5值，同一个输入消息的输出结果始终相同。
+MD5数据的128bit散列值分为4部分，用4个幻数设定其初始值，4个幻数在内存地址上从低到高为：
+幻数 内存地址 A 01 23 45 67 B 89 ab cd ef C fe dc ba 98 D 76 54 32 10 标准幻数总共为4*32=128bit。
+MD5算法生成散列值的过程总共分为三步：1、填充对齐；2、分块；3、多轮压缩。
+1、填充补齐：需要将数据补充为512bit的整数倍，在补齐数据中采用小端格式，最后64bit固定用于表示原始数据大小，中间剩下的bit第一个填1，其余均为0。若数据为1000bit，不足够存放64bit表示原始数据大小的数据，则补齐到512的三倍即可。
+2、分块：分为512bit的数据块。
+3、多轮压缩：将当前散列值的4部分各复制一份，分别用a、b、c、d表示，压缩共有4轮，每轮压缩过程使用数据块和a、b、c、d进行一系列与、或、非、循环移位的位操作，将a、b、c、d各自更新4次，4轮压缩一共更新16次。完成4轮压缩后，将最后得到的a、b、c、d分别加回到当前散列值的4个部分，散列值被更新。之所以叫压缩，是因为这个过程实际上在使用512bit的数据块来更新128bit的散列值，信息被压缩了，然后再使用后续大块进行相同操作，唯一不同点在于此时散列值初始值为前一个大块的最终值。
+在所有大块上完成多轮压缩后，散列值更新为最终输出的MD5值，将这4部分合起来并变换为大端数即为最终输出的MD5值。
+MD5信息摘要算法于1992年公开，其主要目的在于取代MD4算法，1996年后MD5算法被证实存在弱点，可以被加以破解，2004年MD5算法被证实无法防止碰撞，不适用于SSL公开密钥、数字签名等安全性认证。
+应用场景 文件校验
+数据库字段加密
+如何攻击 MD5只是一个产生消息摘要的散列函数，而非加密算法，这个过程有信息损失且不可逆推。举例：1 | 1 = 1，但是不能倒推原始数据。
+以鸽笼原理举例，一定会有同一个笼子至少有两只鸽子，引申出碰撞的概念。
+原像攻击 这是对MD5的第一个基本安全要求，即找到任意一个能产生这个MD5值的消息，不过到今天也没有一个通用的可行方案。
+暴力穷举：MD5值的范围在0~2^128^之间，理论上可行，但工程上不现实。
+第二原像攻击 如果给定一个消息，能不能再找到另外一个MD5值相同的消息呢？
+抗第二原像攻击（抗弱碰撞性）是对MD5的第二个基本安全性要求，除了在MD4弱消息上可行，对于MD5目前并没有有效的可行方案。
+抗碰撞性（最不具安全性） 也叫抗强碰撞性，是对MD5的第三个基本安全性要求。
+这个特性继续放宽了攻击标准，不指定MD5值和消息，只要找出两个MD5值相同的消息即可。
+之前的研究很长时间都困在“伪碰撞”的范围，真正的突破在2005年山东大学王小云团队的&amp;quot;How to Break MD5 and Other Hash Functions&amp;quot;论文，研究思路为基于模块化差分，大体思路为先找到局部碰撞，然后分析差分如何传播，找到差分路径，再利用消息修改技术得到能产生碰撞的消息对。
+和MD5算法本身相比，寻找碰撞的方法要抽象、复杂得多，但这也正是信安领域的魅力。
+这个方法在大约15~60min内找到了碰撞，从学术角度看，MD5大势已去，但从工程角度而言，虽然可以快速找到大量MD5碰撞，但这两个碰撞的消息是根据差分路径和消息修改精心构造而来，基本上都是没有实际意义的乱码，很难想象会对MD5的工程应用造成什么直接影响。
+在王小云团队的研究基础上，2007年Marc Stevens在硕士论文中交付了两项新成果：1、用一个内容在几秒钟内生成另外两个MD5值一样，但内容不同的消息，重要的是生成的内容可以有意义，该成果有一个叫fastcoll的软件，可通过该软件生成MD5值相同且可以正常打开的图片，但仔细观察文本就会发现其结尾数据并不相同，这被称为相同前缀碰撞，原始内容作为前缀，然后不断尝试构造两个不同的后缀数据，直到最后两者MD5相同，前缀数据保留了内容本身的意义。换个概念来讲，若用可执行程序作为前缀，攻击者可绕过审核发布钓鱼软件，只需让软件内部做一个判定，如本程序最后1bit为1执行正常行为，0执行恶意行为，正常版本通过检测后再用恶意版本进行替换，若只依赖于MD5值判断的话将无法检测到替换的发生。相同前缀生成的可执行文件代码一样，只是触发条件不同，但是在杀毒过程中还是有可能发现可疑行为，所以最好情况是正常版本和恶意版本为两个不相干的程序；2、自由选择前缀消息内容，生成两个MD5值一样但前缀内容不同的文件，称之为选择前缀碰撞，其还会对使用MD5的数字签名产生巨大威胁。
+文章许可：本文采用CC BY-NC-SA 4.0许可协议，转载请注明出处。</description>
     </item>
     
     <item>
@@ -788,6 +788,24 @@ GTK+特点 稳定、跨平台、多语言绑定、接口丰富、与时俱进、
     </item>
     
     <item>
+      <title>博客搭建</title>
+      <link>https://oopsdc.com/post/%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA/</link>
+      <pubDate>Fri, 12 Mar 2021 12:29:53 +0800</pubDate>
+      
+      <guid>https://oopsdc.com/post/%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA/</guid>
+      <description>博客搭建 hugo Hugo官方网站：https://gohugo.io
+本文以PaperMod主题为例，官方文档：Installation · adityatelange/hugo-PaperMod Wiki (github.com)
+需求准备 Hugo：Releases · gohugoio/hugo (github.com)
+安装步骤 1.解压压缩包 2.配置环境变量 D:\Env\hugo_0.83.1 3.初始化博客 官方文档推荐我们使用易读性更高的yml格式初始化博客。
+hugo new site &amp;lt;name of site&amp;gt; -f yml 4.指定主题 在config.yml文件中设置主题。
+theme: PaperMod 5.本地启动 先在本地看看网站跑起来的效果
+hugo server 6.创建GitHub仓库 具体操作详见之后的hexo主题教学。
+7.修改baseUrl 将config.yml文件中的baseUrl修改为刚刚创建的仓库。
+baseURL: &amp;#34;https://&amp;lt;username&amp;gt;.github.io/&amp;#34; 8.生成public文件夹 public中包含所有静态页面的内容，我们需要生成这个文件夹并上传到远程仓库中，完成博客部署。
+hugo 9.push到远程仓库 # 配置代理 git config --global http.proxy socks5://127.0.0.1:&amp;lt;port&amp;gt; git config --global https.proxy socks5://127.0.0.1:&amp;lt;port&amp;gt; # 更改默认分支 git push -u origin main # push文件 cd public git init git add .</description>
+    </item>
+    
+    <item>
       <title>My 1st post</title>
       <link>https://oopsdc.com/post/my-1st-post/</link>
       <pubDate>Tue, 15 Sep 2020 11:30:03 +0000</pubDate>
@@ -861,24 +879,6 @@ weak_auth Des：小宁写了一个登陆验证页面，随手就设了一个密�
 获得flag。
 simple_php Des：小宁听说php是最好的语言，于是她简单学习之后写了几行php代码。
 &amp;lt;?php show_source(__FILE__); include(&amp;#34;config.php&amp;#34;); $a = @$_GET[&amp;#39;a&amp;#39;]; $b = @$_GET[&amp;#39;b&amp;#39;]; if ($a == 0 and $a) { echo $flag1; } if (is_numeric($b)) { exit(); } if ($b &amp;gt; 1234) { echo $flag2; } ?</description>
-    </item>
-    
-    <item>
-      <title></title>
-      <link>https://oopsdc.com/post/http%E5%8D%8F%E8%AE%AE/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>https://oopsdc.com/post/http%E5%8D%8F%E8%AE%AE/</guid>
-      <description>HTTP协议简介 HTTP，即Hyper Text Transfer Protocol超文本传输协议。是用于万维网WWW (World Wide Web)服务器传输超文本到本地浏览器的传输协议，其基于TCP/IP通信协议传输数据。但由于HTTP以明文方式传输数据，缺乏安全性，后面又诞生了HTTPS，即HyperText Transfer Protocol Secure超文本传输安全协议，HTTPS也经由HTTP进行通信，但利用SSL/TLS加密数据包，提供对网站服务器的认证，保护交换资料的隐私和完整性。
-使用HTTP协议的网站URL为http://开头，默认端口号为80；使用HTTPS协议的网站URL为https://开头，默认端口号为443。
-接下来稍微对这两个协议进行一下拓展。
-HTTP工作原理 HTTP工作于C/S，即客户端/服务端架构上，浏览器作为HTTP客户端，通过URL向HTTP服务端，即Web服务器发送请求，常见Web服务器有Apache、IIS等，Web服务器依据收到的请求向客户端发送对应的响应信息。
-HTTP有以下三个特点：
-无连接：限制每次连接只处理一个请求，服务端处理完客户端的请求并收到客户端的应答后就会断开连接，其优势在于节省传输时间； 媒体独立：只要客户端和服务端知道如何处理数据内容，任何类型的数据都可通过HTTP进行传输，客户端和服务端只需协商好MIME-type即可； 无状态：HTTP协议对事务处理没有记忆能力，缺少状态意味着若后续还想继续处理之前的信息将必须对所有数据进行重传，这样做可能导致每次连接传输的数据量增大。 HTTP协议通信流程如下：
-请求方式 Des: HTTP 请求方法, HTTP/1.1协议中共定义了八种方法（也叫动作）来以不同方式操作指定的资源。
-页面内容如下：
-HTTP Method is GET Use CTF**B Method, I will give you flag. Hint: If you got 「HTTP Method Not Allowed」 Error, you should request index.php. 请求包如下：
-GET /index.php HTTP/1.1 Host: challenge-ce480bbff14843e2.sandbox.ctfhub.com:10800 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101 Firefox/91.0 Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8 Accept-Language: en-US,en;q=0.5 Accept-Encoding: gzip, deflate Connection: close Upgrade-Insecure-Requests: 1 Cache-Control: max-age=0 按照给出的方式，使用bp抓包并对网站发送请求：</description>
     </item>
     
     <item>

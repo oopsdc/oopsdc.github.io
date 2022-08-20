@@ -12,9 +12,26 @@
     <language>en-us</language>
     <lastBuildDate>Sat, 13 Aug 2022 20:27:10 +0800</lastBuildDate><atom:link href="https://oopsdc.com/tags/ctfhub/index.xml" rel="self" type="application/rss+xml" />
     <item>
+      <title>密码口令</title>
+      <link>https://oopsdc.com/post/%E5%AF%86%E7%A0%81%E5%8F%A3%E4%BB%A4/</link>
+      <pubDate>Sat, 13 Aug 2022 20:27:10 +0800</pubDate>
+      
+      <guid>https://oopsdc.com/post/%E5%AF%86%E7%A0%81%E5%8F%A3%E4%BB%A4/</guid>
+      <description>弱口令 Des: 通常认为容易被别人（他们有可能对你很了解）猜测到或被破解工具破解的口令均为弱口令。
+页面如下：
+尝试账密admin/admin。
+获得flag。
+拓展：弱口令在实战中的应用 由于一些产品的默认设置或使用人员的偷懒行为，我们有时在实际渗透过程中尝试一下弱口令会获得一些意想不到的收获。
+默认口令 Des: N/A。
+页面如下：
+在搜索引擎搜索eyou邮件网关默认账号即可，此处附上其它相关默认账密：
+邮件、网管系统默认账密：admin aaaaa LDAP默认账密：eyouadmin aaaaa MySQL默认账密：root 密码空 网关后台默认账密： admin +-ccccc eyougw admin@(eyou) eyouuser eyou_admin 文章许可：本文采用CC BY-NC-SA 4.0许可协议，转载请注明出处。</description>
+    </item>
+    
+    <item>
       <title>信息泄漏</title>
       <link>https://oopsdc.com/post/%E4%BF%A1%E6%81%AF%E6%B3%84%E9%9C%B2/</link>
-      <pubDate>Sat, 13 Aug 2022 20:27:10 +0800</pubDate>
+      <pubDate>Thu, 11 Aug 2022 20:27:10 +0800</pubDate>
       
       <guid>https://oopsdc.com/post/%E4%BF%A1%E6%81%AF%E6%B3%84%E9%9C%B2/</guid>
       <description>目录遍历 Des: N/A。
@@ -44,20 +61,21 @@ vim缓存 Des: 当开发人员在线上环境中使用 vim 编辑器，在使用
     </item>
     
     <item>
-      <title>密码口令</title>
-      <link>https://oopsdc.com/post/%E5%AF%86%E7%A0%81%E5%8F%A3%E4%BB%A4/</link>
-      <pubDate>Sat, 13 Aug 2022 20:27:10 +0800</pubDate>
+      <title>HTTP协议</title>
+      <link>https://oopsdc.com/post/http%E5%8D%8F%E8%AE%AE/</link>
+      <pubDate>Wed, 10 Aug 2022 09:03:30 +0800</pubDate>
       
-      <guid>https://oopsdc.com/post/%E5%AF%86%E7%A0%81%E5%8F%A3%E4%BB%A4/</guid>
-      <description>弱口令 Des: 通常认为容易被别人（他们有可能对你很了解）猜测到或被破解工具破解的口令均为弱口令。
-页面如下：
-尝试账密admin/admin。
-获得flag。
-拓展：弱口令在实战中的应用 由于一些产品的默认设置或使用人员的偷懒行为，我们有时在实际渗透过程中尝试一下弱口令会获得一些意想不到的收获。
-默认口令 Des: N/A。
-页面如下：
-在搜索引擎搜索eyou邮件网关默认账号即可，此处附上其它相关默认账密：
-邮件、网管系统默认账密：admin aaaaa LDAP默认账密：eyouadmin aaaaa MySQL默认账密：root 密码空 网关后台默认账密： admin +-ccccc eyougw admin@(eyou) eyouuser eyou_admin 文章许可：本文采用CC BY-NC-SA 4.0许可协议，转载请注明出处。</description>
+      <guid>https://oopsdc.com/post/http%E5%8D%8F%E8%AE%AE/</guid>
+      <description>HTTP协议简介 HTTP，即Hyper Text Transfer Protocol超文本传输协议。是用于万维网WWW (World Wide Web)服务器传输超文本到本地浏览器的传输协议，其基于TCP/IP通信协议传输数据。但由于HTTP以明文方式传输数据，缺乏安全性，后面又诞生了HTTPS，即HyperText Transfer Protocol Secure超文本传输安全协议，HTTPS也经由HTTP进行通信，但利用SSL/TLS加密数据包，提供对网站服务器的认证，保护交换资料的隐私和完整性。
+使用HTTP协议的网站URL为http://开头，默认端口号为80；使用HTTPS协议的网站URL为https://开头，默认端口号为443。
+接下来稍微对这两个协议进行一下拓展。
+HTTP工作原理 HTTP工作于C/S，即客户端/服务端架构上，浏览器作为HTTP客户端，通过URL向HTTP服务端，即Web服务器发送请求，常见Web服务器有Apache、IIS等，Web服务器依据收到的请求向客户端发送对应的响应信息。
+HTTP有以下三个特点：
+无连接：限制每次连接只处理一个请求，服务端处理完客户端的请求并收到客户端的应答后就会断开连接，其优势在于节省传输时间； 媒体独立：只要客户端和服务端知道如何处理数据内容，任何类型的数据都可通过HTTP进行传输，客户端和服务端只需协商好MIME-type即可； 无状态：HTTP协议对事务处理没有记忆能力，缺少状态意味着若后续还想继续处理之前的信息将必须对所有数据进行重传，这样做可能导致每次连接传输的数据量增大。 HTTP协议通信流程如下：
+请求方式 Des: HTTP 请求方法, HTTP/1.1协议中共定义了八种方法（也叫动作）来以不同方式操作指定的资源。
+页面内容如下：
+HTTP Method is GET Use CTF**B Method, I will give you flag. Hint: If you got 「HTTP Method Not Allowed」 Error, you should request index.php. 请求包如下：
+GET /index.php HTTP/1.1 Host: challenge-ce480bbff14843e2.sandbox.ctfhub.com:10800 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101 Firefox/91.0 Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8 Accept-Language: en-US,en;q=0.5 Accept-Encoding: gzip, deflate Connection: close Upgrade-Insecure-Requests: 1 Cache-Control: max-age=0 按照给出的方式，使用bp抓包并对网站发送请求：</description>
     </item>
     
   </channel>
